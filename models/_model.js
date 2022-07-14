@@ -43,7 +43,6 @@ class Model{
 
     findQuery(query) {
         var this_ = this
-        let ObjectID = require('mongodb').ObjectID;
         return new Promise(function(resolve, reject) {
             
 			

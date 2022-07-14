@@ -14,6 +14,10 @@ router.get([
     '/personal'
 ],publicController.index);
 
+router.post([
+    '/personal/placeorder'
+],publicController.placeorder);
+
 
 
 module.exports = router;

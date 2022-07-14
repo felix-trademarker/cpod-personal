@@ -1,30 +1,18 @@
-var fs = require('fs');
-let moment = require('moment')
 
-exports.getClientSecret = async function() {
-    
-    return new Promise(function(resolve, reject) {
-        fs.readFile('client_secret.json', function processClientSecrets(err, content) {
+exports.getSKEY = function() { return process.env.SKEY }
 
-            if (err) reject(err)
-            
-            resolve(JSON.parse(content))
-        });
-    });
+exports.getPKEY = function() { return process.env.PKEY }
 
+exports.makeid = function(length) {
+    var result           = '';
+    var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    var charactersLength = characters.length;
+  
+    for ( var i = 0; i < length; i++ ) {
+       result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+  
+    return result;
 }
-
-exports.getPuppetEnv = function() {
-    
-    let todaysDate = moment();
-    let endOfLastMonth = moment().startOf('month').subtract(1, 'week');
-
-    let weekOfMonth = todaysDate.diff(endOfLastMonth, 'weeks');
-    console.log(weekOfMonth % 2);
-
-    return ((weekOfMonth % 2) === 1 ? process.env.puppet : (process.env.puppet2 ? process.env.puppet2 : process.env.puppet))
-
-}
-
 
 

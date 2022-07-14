@@ -44,6 +44,7 @@ conn.connectToServer( function( err, client ) { // MAIN MONGO START
 
   console.log("app running");
 
+  app.locals.helpers = require('./helpers');
   app.locals.moment = require('moment');
 
   // ROUTES
