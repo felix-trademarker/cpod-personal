@@ -1,4 +1,4 @@
-const stripe = require("stripe")(process.env.SKEY);
+const stripe = require("stripe")(process.env.SKEY,{apiVersion: '2020-08-27'});
 
 var Model = require('./../models/_model')
 
@@ -18,6 +18,17 @@ exports.index = async function(req, res, next) {
 exports.placeorder = async function(req, res, next) {
 
     console.log("placed!", req.body);
+
+    const customers = await stripe.customers.search({
+        query: 'email:"'+req.body.email+'"',
+    });
+
+    if (customers && customers.data.length <= 0) {
+
+        res.flash('error', 'Sorry! This promo is only for existing customers!');
+        res.redirect("/personal/")
+    }
+
     var rpoOrders = new Model("orders")
     var rpoUsers = new Model("users")
 
@@ -100,7 +111,8 @@ exports.placeorder = async function(req, res, next) {
 
     } catch (err) {
         console.log(err);
-        res.flash('error', 'Sorry!, Something went wrong please try again later.');
+        res.flash('error', 'Sorry! Something went wrong please try again later.');
+        res.redirect("/personal/")
         // send admin notification 
 
     }
