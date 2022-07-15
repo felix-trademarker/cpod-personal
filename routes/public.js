@@ -14,6 +14,10 @@ router.get([
     '/personal'
 ],publicController.index);
 
+router.get([
+    '/personal/thankyou/:orderNo'
+],publicController.thankyou);
+
 router.post([
     '/personal/placeorder'
 ],publicController.placeorder);

@@ -18,7 +18,8 @@ exports.index = async function(req, res, next) {
 exports.placeorder = async function(req, res, next) {
 
     console.log("placed!", req.body);
-    var rpoOrders = new Model("orders.personal")
+    var rpoOrders = new Model("orders")
+    var rpoUsers = new Model("users")
 
     // create order ID
     let flag=true
@@ -54,7 +55,7 @@ exports.placeorder = async function(req, res, next) {
             }
         );
     
-        let description = "10 Promo Classes Order# " + orderNo
+        let description = "10 Classes Promo Order# " + orderNo
         
         const charge = await stripe.charges.create({
             amount: (299 * 100),
@@ -75,12 +76,27 @@ exports.placeorder = async function(req, res, next) {
             //  send email notification
             // save record to mongo158
 
-            
+            // find users 
+            let users = await rpoUsers.findQuery({email: req.body.email})
+
+            let orderData = {
+                orderNo: orderNo,
+                description: description,
+                amount: 299,
+                customer: (users && users.length > 0 ? users[0] : null),
+                customerEmail: req.body.email,
+                customerFirstName: req.body.firstName,
+                customerLastName: req.body.lastName,
+                customerAddress: req.body.address,
+                charge: charge
+            }
+
+            rpoOrders.put(orderData)
         }
 
         res.flash('success', 'Thank You!');
 
-        res.redirect("/personal")
+        res.redirect("/personal/thankyou/"+orderNo)
 
     } catch (err) {
         console.log(err);
@@ -88,6 +104,21 @@ exports.placeorder = async function(req, res, next) {
         // send admin notification 
 
     }
+    
+  
+}
+
+exports.thankyou = async function(req, res, next) {
+
+    var rpoOrders = new Model("orders")
+    let orders = await rpoOrders.findQuery({orderNo: req.params.orderNo})
+    res.render('thank-you', {
+        layout: 'layout/public-layout', 
+        title: '',
+        description: '',
+        keywords: '',
+        orders: (orders && orders.length > 0 ? orders[0] : null)
+    });
     
   
 }

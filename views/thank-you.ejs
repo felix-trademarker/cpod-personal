@@ -1,0 +1,27 @@
+
+
+<div id="thankYouApp" class="container">
+  <div class="row justify-content-center box-bg-container">
+    <div class="col-12 text-center">
+    <h1 class="text-success">Thank you for your order!</h1>
+    <p class="mb-3">Your order number is: <strong><%= orders.orderNo %></strong></p>   
+
+    <h3>Order Summary</h3>
+    <table class="table">
+      <tr>
+        <th>Order #</th>
+        <th>Description</th>
+        <th>Quantity</th>
+        <th>Amount</th>
+      </tr>
+      <tr>
+        <td><%= orders.orderNo %></td>
+        <td><%= orders.description %></td>
+        <td>1</td>
+        <td>$299.00</td>
+      </tr>
+    </table>
+    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Facilis, quisquam perferendis consequuntur doloremque eius quidem, voluptas cum aut nulla cupiditate dolore, sit quos nesciunt deserunt debitis unde et perspiciatis exercitationem.</p>
+    </div>
+  </div>
+</div>
