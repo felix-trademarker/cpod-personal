@@ -1,5 +1,6 @@
 const stripe = require("stripe")(process.env.SKEY,{apiVersion: '2020-08-27'});
 let geoip = require('geoip-lite');
+let emailService = require('./../services/emailNotificationService')
 
 var Model = require('./../models/_model')
 
@@ -139,6 +140,33 @@ exports.placeorder = async function(req, res, next) {
             }
 
             rpoOrders.put(orderData)
+
+            let args = {
+                to: "felix@bigfoot.com",
+                subject: "Chinesepod Personal | A new order has been placed | "+ orderNo,
+                message: `
+                    <p>Hi Admin,</p>
+                    <p>A new order has been placed</p>
+                    <table>
+                    <tr>
+                      <th style="padding:10px;text-align:left">Order #</th>
+                      <th style="padding:10px;text-align:left">Customer</th>
+                      <th style="padding:10px;text-align:left">Description</th>
+                      <th style="padding:10px;text-align:left">Amount(USD)</th>
+                    </tr>
+                    <tr>
+                      <td style="padding:10px">${orderNo}</td>
+                      <td style="padding:10px">${req.body.email}</td>
+                      <td style="padding:10px">10 classes promo<br>
+                      ${req.body.selectedZone}<br>
+                      ${req.body.timeSelected}
+                      </td>
+                      <td style="padding:10px">$${orderData.amount}</td>
+                    </tr>
+                    </table>
+                `
+            }
+            emailService.sendEmailNotification(args)
         }
 
         res.flash('success', 'Thank You!');
@@ -160,6 +188,7 @@ exports.thankyou = async function(req, res, next) {
 
     var rpoOrders = new Model("orders")
     let orders = await rpoOrders.findQuery({orderNo: req.params.orderNo})
+    console.log(orders);
     res.render('thank-you', {
         layout: 'layout/public-layout', 
         title: '',

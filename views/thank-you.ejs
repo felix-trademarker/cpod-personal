@@ -4,7 +4,7 @@
   <div class="row justify-content-center box-bg-container">
     <div class="col-12 text-center">
       <h1 class="text-success">Thank you for your order!</h1>
-    <% if(orders && orders.orderNo) { %>
+    <% if(orders) { %>
       <p class="mb-3">Your order number is: <strong><%= orders.orderNo %></strong></p>   
 
       <h3>Order Summary</h3>
@@ -17,8 +17,11 @@
         </tr>
         <tr>
           <td><%= orders.orderNo %></td>
-          <td><%= orders.description %></td>
-          <td>1</td>
+          <td><%= orders.description %><br>
+            Zone: <%= orders.customerZone %><br>
+            Time Schedule: <%= orders.customerTime %>
+          </td>
+          <td>10 classes</td>
           <td>$299.00</td>
         </tr>
       </table>
