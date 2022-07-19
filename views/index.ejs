@@ -15,9 +15,27 @@
           </div>
         <% } %>
 
-        <h1>Pay for 10 Classes</h1>
+        <h1>10 Classes Promo</h1>
 
-        <p>Short description Lorem ipsum dolor sit amet consectetur, adipisicing elit. Corporis ipsam, nobis modi cumque neque deserunt laborum illum eveniet soluta optio in nihil ad quod exercitationem dolores, dolore at dicta expedita.</p>
+        <div class="row align-items-center">
+          <div class="col-md-9">
+            <p>Short description Lorem ipsum dolor sit amet consectetur, adipisicing elit. Corporis ipsam, nobis modi cumque neque deserunt laborum illum eveniet soluta optio in nihil ad quod exercitationem dolores, dolore at dicta expedita.</p>
+          </div>
+
+          <div class="col-md-3">
+            <div class="card">
+              <div class="card-header">
+                Summary Charges
+              </div>
+              <div class="card-body">
+                <p>10 classes: <span style="float: right;font-weight: 600;">$299</span></p>
+                <p>Currency: <span style="float: right;font-weight: 600;">USD</span></p>
+                <p>Total: <span style="float: right;font-weight: 600;font-size: 30px;line-height:25px">$299</span></p>
+              </div>
+            </div>
+          </div>
+        </div>
+
         
         <form id="payment-form" method="post" action="/personal/placeorder">
           <div class="form-row">
@@ -111,7 +129,7 @@
           </div>
 
           <div class="form-group text-right">
-            <button type="button" @click="submitForm" class="btn btn-danger btn-lg">Place Order</button>
+            <button type="button" @click="submitForm" class="btn btn-danger btn-lg">Place Order $299</button>
           </div>
 
         </form>
