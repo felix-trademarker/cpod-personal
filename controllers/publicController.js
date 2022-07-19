@@ -1,15 +1,54 @@
 const stripe = require("stripe")(process.env.SKEY,{apiVersion: '2020-08-27'});
+let geoip = require('geoip-lite');
 
 var Model = require('./../models/_model')
 
 
 exports.index = async function(req, res, next) {
 
+    let ip = req.ip;
+    
+    // USED ONLY FOR DEV
+    if (req.ip == "::1") {
+        ip = '69.162.81.155'
+    }
+
+    let geo = geoip.lookup(ip);
+
+    var rpoTimeTable = new Model("timeTable")
+
+    let timeTable = await rpoTimeTable.get()
+
+    let timeZone = [
+        ['New York', 'EST', 'Pacific', 'Mountain', 'Central' ],
+        ['Berlin', 'Paris', 'Rome' ],
+        ['United Kingdom', 'IIM']
+    ]
+
+    let clientTimezone = 0;
+
+    if (geo.country == 'US') {
+        clientTimezone = 0
+    }
+
+    if (geo.country == 'DE') {
+        clientTimezone = 1
+    }
+
+    if (geo.country == 'GB') {
+        clientTimezone = 2
+    }
+
+    // console.log(geo);
+
     res.render('index', {
         layout: 'layout/public-layout', 
         title: '',
         description: '',
-        keywords: ''
+        keywords: '',
+        clientTimezone: clientTimezone,
+        timeTable: timeTable,
+        timeZone: timeZone
     });
     
   
@@ -28,6 +67,10 @@ exports.placeorder = async function(req, res, next) {
         res.flash('error', 'Sorry! This promo is only for existing customers!');
         res.redirect("/personal/")
     }
+
+    // console.log(req.body);
+    // return;
+    // return
 
     var rpoOrders = new Model("orders")
     var rpoUsers = new Model("users")
@@ -54,17 +97,17 @@ exports.placeorder = async function(req, res, next) {
 
     try {
 
-        const stripeCustomer = await stripe.customers.create({
-            email: req.body.email,
-        });
+        // const stripeCustomer = await stripe.customers.create({
+        //     email: req.body.email,
+        // });
     
     
-        const source = await stripe.customers.createSource(
-            stripeCustomer.id,
-            {
-                source: req.body.stripeToken,
-            }
-        );
+        // const source = await stripe.customers.createSource(
+        //     stripeCustomer.id,
+        //     {
+        //         source: req.body.stripeToken,
+        //     }
+        // );
     
         let description = "10 Classes Promo Order# " + orderNo
         
@@ -72,15 +115,9 @@ exports.placeorder = async function(req, res, next) {
             amount: (299 * 100),
             currency: 'USD',
             description: description,
-            source: source.id,
-            metadata : {
-              'firstName': req.body.firstName,
-              'lastName' : req.body.lastName,
-              'address'  : req.body.address,
-              'email'    : req.body.email
-            },
+            source: customers.data[0].default_source,
             receipt_email: req.body.email,
-            customer: stripeCustomer.id
+            customer: customers.data[0].id
         });
 
         if ( charge && charge.paid ) {
@@ -96,9 +133,8 @@ exports.placeorder = async function(req, res, next) {
                 amount: 299,
                 customer: (users && users.length > 0 ? users[0] : null),
                 customerEmail: req.body.email,
-                customerFirstName: req.body.firstName,
-                customerLastName: req.body.lastName,
-                customerAddress: req.body.address,
+                customerZone: req.body.selectedZone,
+                customerTime: req.body.timeSelected,
                 charge: charge
             }
 

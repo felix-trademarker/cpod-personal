@@ -1,207 +1,210 @@
 <div class="container">
-    <div class="row">
-        <div class="col-12">
-            <section id="checkout-content">
+  <div class="row">
+    <div class="col-12">
+      <section id="checkout-content">
 
-                <% if (flash.success) { %>
-                    <div class="alert alert-success" role="alert">
-                        <strong><%= flash.success %></strong>
-                    </div>
-                <% } %>
+        <% if (flash.success) { %>
+          <div class="alert alert-success" role="alert">
+            <strong><%= flash.success %></strong>
+          </div>
+        <% } %>
+
+        <% if (flash.error) { %>
+          <div class="alert alert-warning" role="alert">
+            <strong><%= flash.error %></strong>
+          </div>
+        <% } %>
+
+        <h1>Pay for 10 Classes</h1>
+
+        <p>Short description Lorem ipsum dolor sit amet consectetur, adipisicing elit. Corporis ipsam, nobis modi cumque neque deserunt laborum illum eveniet soluta optio in nihil ad quod exercitationem dolores, dolore at dicta expedita.</p>
+        
+        <form id="payment-form" method="post" action="/personal/placeorder">
+          <div class="form-row">
+            <div class="col-md-12">
+              <div class="alert alert-danger" role="alert" v-if="showError">
+                {{ errorMessage }}
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-12">
+                            
       
-                <% if (flash.error) { %>
-                    <div class="alert alert-warning" role="alert">
-                        <strong><%= flash.error %></strong>
-                    </div>
-                <% } %>
+            <div class="row g-3">                            
 
-                <h1>Pay for 10 Classes</h1>
-
-                <p>Short description Lorem ipsum dolor sit amet consectetur, adipisicing elit. Corporis ipsam, nobis modi cumque neque deserunt laborum illum eveniet soluta optio in nihil ad quod exercitationem dolores, dolore at dicta expedita.</p>
-                <form id="payment-form" method="post" action="/personal/placeorder">
-                    <div class="form-row">
-                        <div class="form-group col-md-12">
-                            <div id="card-errors" role="alert"></div>
-                        </div>
-
-                        <div class="form-group col-md-6">
-                            <label>Customer Information:</label>
-                            <div class="form-row">
-                                <div class="form-group col-md-6">
-                                    <input type="text" name="firstName" class="form-control" placeholder="First Name">
-                                </div>
-                                <div class="form-group col-md-6">
-                                    <input type="text" name="lastName" class="form-control" placeholder="Last Name">
-                                </div>
-                                <div class="form-group col-md-12">
-                                    <input type="text" id="email" name="email" class="form-control" placeholder="Email Address">
-                                </div>
-
-                                <div class="form-group col-md-12">
-                                    <input type="text" name="address" class="form-control" placeholder="Address">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="form-group col-md-6">
-
-                            <label>Card Information:</label>
-
-                            <div class="form-row">
-                                <div class="col-12">
-                                    <div id="CcNumber" class="form-control" style="padding-top: 10px;"></div>
-                                </div>
-                            </div>
-
+              <div class="col-md-6">
+                <div class="col-auto">
+                  <label for="email">Customer Email</label>
+                </div>
                 
-                            <div class="form-field" style="margin-top:16px">
-                                <div class="row">
-                                    <div class="col-6">
-                                    <div class="form-field-inner" >
-                                        <div id="cardExpiry" class="form-control" style="padding-top: 10px;"></div>
-                                    </div>
-                                    </div>
-                                    <div class="col-6">
-                                    <div class="form-field-inner">
-                                        <div id="cardCvc" class="form-control" style="padding-top: 10px;"></div>
-                                    </div>
-                                    </div>
-                                </div>
+                <div class="form-group col">
+                  <input type="text" id="email" name="email" v-model.lazy="customerEmail" @change="checkEmail" class="form-control" placeholder="Email Address">
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="col-auto">
+                  <label for="selectedZone">Time Zone</label>
+                </div>
+
+                <div class="form-group col">
+                  <select class="form-control" name="selectedZone" v-model="selectedZone">
+                    <option value="" disabled>Select TimeZone</option>
+                    <% for(let i=0; i < timeZone.length; i++) { %>
+                      <option value="<%= timeZone[i].join(',') %>"><%= timeZone[i].join(', ') %></option>
+                    <% } %>
+                  </select>
+                </div>
+
+              </div>
+
+            </div>
+
+            <div class="row g-3 mt-2">                            
+                
+              <div class="col">
+                <p>Plesae select best time.</p>
+                <table style="font-size: 14px;" class="table tbl-timeTable table-striped">
+                  <thead class="thead-dark">
+                    <tr>
+                      <th style="width:25%"></th>
+                      <th style="width:15%">Mon</th>
+                      <th style="width:15%">Tue</th>
+                      <th style="width:15%">Wed</th>
+                      <th style="width:15%">Thu</th>
+                      <th style="width:15%">Fri</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% var counter=0; for(var i=0; i < timeTable.length; i++) { %>
+                    <tr>
+                      <th><%= timeTable[0].time[i] %></th>
+                      <% for(var t=0; t < timeTable.length; t++) { %>
+                        <td :class="timeTbl[<%= counter %>] ? 'Booked' : '<%= timeTable[t].availability[i] %>'">
+
+                          <div class="row">
+                            
+                            <div class="col-auto d-none" style="padding-right: 0;">
+                              <div class="form-group form-switch">
+                                <input id="inpCHK-<%= counter %>" class="form-check-input" type="radio" name="timeSelected" @change="updateTimeTbl(<%= counter %>)" value="<%= timeTable[t].day %>: <%= timeTable[t].time[i] %>" v-model="timeSelected">
+                              </div>
+                            </div>
+                            <div class="col">
+                              <label :class="'btn btn-sm btn-'+(timeTbl[<%= counter %>] ? 'success':'info')" for="inpCHK-<%= counter %>">{{ timeTbl[<%= counter %>] ? 'Booked' : 'Set' }}</label>
                             </div>
 
-                            <div class="form-group">
-                       
-                                <div class="form-field" style="margin-top:16px">
-                                  <div id="postalCode" class="form-control" style="padding-top: 10px;"></div>
-                                </div>
-                            </div>
-                        </div>
+                          </div>
+                        </td>
+                      <% counter++; } %>
+                        
+                    </tr>
+                    <% } %>
+                  </tbody>
 
-                    </div>
-                    <div class="form-group text-right">
-                        <button type="submit" class="btn btn-primary">Place Order</button>
+                </table>
+              </div>
 
-                    </div>
+            </div>
+          
 
-                </form>
-            </section>
+          </div>
 
-        </div>
+          <div class="form-group text-right">
+            <button type="button" @click="submitForm" class="btn btn-danger btn-lg">Place Order</button>
+          </div>
+
+        </form>
+      </section>
+
     </div>
+  </div>
 </div>
 
-<script src="https://js.stripe.com/v3/"></script>
-    <script>
-      // Create a Stripe client.
-var stripe = Stripe("<%= helpers.getPKEY() %>");
-
-// Create an instance of Elements.
-var elements = stripe.elements();
-
-// Custom styling can be passed to options when creating an Element.
-// (Note that this demo uses a wider set of styles than the guide below.)
-var style = {
-  base: {
-    color: '#000',
-    fontFamily: "'Roboto', sans-serif",
-    fontSmoothing: 'antialiased',
-    fontSize: '16px',
-    fontWeight: '300',
-    '::placeholder': {
-      color: '#6c757d',
+<script src="/personal/js/vue-2.js"></script>
+<script>
+  var vueApp = new Vue({
+    el: "#checkout-content",
+    data: {
+      customerEmail: '',
+      customerData: null,
+      preferedContact: '',
+      selectedZone: '',
+      timeSelected: '',
+      timeTbl:[
+          false, false, false, false, false,
+          false, false, false, false, false,
+          false, false, false, false, false,
+          false, false, false, false, false,
+          false, false, false, false, false
+      ],
+      showError: false,
+      errorMessage: ''
     },
-    iconColor: '#439ff2'
-  },
-  invalid: {
-    color: '#fa755a',
-    iconColor: '#fa755a'
-  }
-};
+    methods: {
 
-// Create an instance of the card Element.
-// var card = elements.create('card', {style: style});
+      submitForm: async function() {
+        this.errorMessage = this.validateForm
+        if (!this.errorMessage) {
+          this.showError = false;
+          document.getElementById("payment-form").submit();
+        } else {
+          this.showError = true;
+        }
 
-// Add an instance of the card Element into the `card-element` <div>.
-// card.mount('#card-element');
+      },
 
-var acc = elements.create('cardNumber', {style: style, placeholder: 'Card Number'});
-var cardExpiry = elements.create('cardExpiry', {style: style});
-var cardCvc = elements.create('cardCvc', {style: style});
-var postalCode = elements.create('postalCode', {style: style, placeholder: 'Postal Code'});
-var emailAddress = document.getElementById("email");
+      checkEmail: async function() {
+
+        console.log("checking", this.customerEmail);
+        if (this.customerEmail) {
+
+          let customerInfo = await fetch('http://localhost:9090/personal/api/v1/checkEmail/'+this.customerEmail)
+          .then(response => response.json());
+
+          this.customerData = customerInfo
+
+          console.log(this.customerData);
+
+        }
+
+      },
+
+      updateTimeTbl : function(ndx) {
+        this.timeTbl = [
+          false, false, false, false, false,
+          false, false, false, false, false,
+          false, false, false, false, false,
+          false, false, false, false, false,
+          false, false, false, false, false
+        ]
+
+        this.timeTbl[ndx] = true;
+      }
 
 
-// acc.classList.add("form-control");
-acc.mount('#CcNumber');
-cardExpiry.mount('#cardExpiry');
-cardCvc.mount('#cardCvc');
-postalCode.mount('#postalCode');
+    },
+    computed: {
 
-// Handle real-time validation errors from the card Element.
-acc.on('change', function(event) {
-  var displayError = document.getElementById('card-errors');
-  if (event.error) {
-    displayError.textContent = event.error.message;
-  } else {
-    displayError.textContent = '';
-  }
-});
+      validateForm : function() {
 
-cardExpiry.on('change', function(event) {
-  var displayError = document.getElementById('card-errors');
-  if (event.error) {
-    displayError.textContent = event.error.message;
-  } else {
-    displayError.textContent = '';
-  }
-});
+        let message = ""
+        if (!this.customerEmail) {
+          message = "Please enter email address"
+        } else if (!this.customerData || !this.customerData.status) {
+          message = "Sorry, this promo is only for existing customers!"
+        } else if (!this.selectedZone) {
+          message = "Please select TIMEZONE"
+        } else if (!this.timeSelected) {
+          message = "Please select Time Schedule"
+        }
 
-cardCvc.on('change', function(event) {
-  var displayError = document.getElementById('card-errors');
-  if (event.error) {
-    displayError.textContent = event.error.message;
-  } else {
-    displayError.textContent = '';
-  }
-});
-
-postalCode.on('change', function(event) {
-  var displayError = document.getElementById('card-errors');
-  if (event.error) {
-    displayError.textContent = event.error.message;
-  } else {
-    displayError.textContent = '';
-  }
-});
-
-// Handle form submission.
-var form = document.getElementById('payment-form');
-form.addEventListener('submit', function(event) {
-  event.preventDefault();
-
-  stripe.createToken(acc).then(function(result) {
-    if (result.error) {
-      // Inform the user if there was an error.
-      var errorElement = document.getElementById('card-errors');
-      errorElement.textContent = result.error.message;
-    } else {
-      // Send the token to your server.
-      stripeTokenHandler(result.token);
+        return message;
+      }
     }
-  });
-});
 
-// Submit the form with the token ID.
-function stripeTokenHandler(token) {
-  // Insert the token ID into the form so it gets submitted to the server
-  var form = document.getElementById('payment-form');
-  var hiddenInput = document.createElement('input');
-  hiddenInput.setAttribute('type', 'hidden');
-  hiddenInput.setAttribute('name', 'stripeToken');
-  hiddenInput.setAttribute('value', token.id);
-  form.appendChild(hiddenInput);
+  })
 
-  // Submit the form
-  form.submit();
-}
-    </script>
+  vueApp.selectedZone = "<%= timeZone[clientTimezone].join(',') %>"
+
+</script>

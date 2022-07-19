@@ -2,6 +2,7 @@ var express = require('express');
 
 
 const publicController = require('../controllers/publicController')
+const apiController = require('../controllers/apiController')
 
 
 var router = express.Router();
@@ -21,6 +22,13 @@ router.get([
 router.post([
     '/personal/placeorder'
 ],publicController.placeorder);
+
+
+// ================ API ===============
+// ====================================
+router.get([
+    '/personal/api/v1/checkEmail/:email'
+],apiController.checkEmail);
 
 
 

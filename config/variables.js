@@ -7,7 +7,7 @@ module.exports = {
                         useNewUrlParser: true, 
                         useUnifiedTopology: true 
                       },
-    mongoDB         : 'bigfoot',
+    mongoDB         : process.env.MongoURL ? process.env.mongoDB : 'chinesepod',
     filePathUpload  : (ENV === 'prod' ? process.env.uploadFilePath : process.env.uploadFilePathDev),
     
 };
