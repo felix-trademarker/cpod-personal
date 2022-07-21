@@ -40,10 +40,68 @@ exports.index = async function(req, res, next) {
         clientTimezone = 2
     }
 
+    console.log(geo);
+
+    res.render('index-2', {
+        layout: 'layout/public-layout-2', 
+        title: '',
+        description: '',
+        keywords: '',
+        clientTimezone: clientTimezone,
+        timeTable: timeTable,
+        timeZone: timeZone
+    });
+    
+  
+}
+
+exports.checkout = async function(req, res, next) {
+
+    const customers = await stripe.customers.search({
+        query: 'email:"test@test.cc"',
+    });
+
+    let sourceId = customers.data[customers.data.length - 1].default_source
+
+    console.log("source", sourceId);
+
+    let ip = req.ip;
+    
+    // USED ONLY FOR DEV
+    if (req.ip == "::1") {
+        ip = '69.162.81.155'
+    }
+
+    let geo = geoip.lookup(ip);
+
+    var rpoTimeTable = new Model("timeTable")
+
+    let timeTable = await rpoTimeTable.get()
+
+    let timeZone = [
+        ['New York', 'EST', 'Pacific', 'Mountain', 'Central' ],
+        ['Berlin', 'Paris', 'Rome' ],
+        ['United Kingdom', 'IIM']
+    ]
+
+    let clientTimezone = 0;
+
+    if (geo.country == 'US') {
+        clientTimezone = 0
+    }
+
+    if (geo.country == 'DE') {
+        clientTimezone = 1
+    }
+
+    if (geo.country == 'GB') {
+        clientTimezone = 2
+    }
+
     // console.log(geo);
 
-    res.render('index', {
-        layout: 'layout/public-layout', 
+    res.render('checkout', {
+        layout: 'layout/public-layout-2', 
         title: '',
         description: '',
         keywords: '',
@@ -128,14 +186,19 @@ exports.placeorder = async function(req, res, next) {
             // find users 
             let users = await rpoUsers.findQuery({email: req.body.email})
 
+            let schedules = {
+                date : req.body.date,
+                time : req.body.time
+            }
+
             let orderData = {
                 orderNo: orderNo,
                 description: description,
                 amount: 299,
                 customer: (users && users.length > 0 ? users[0] : null),
                 customerEmail: req.body.email,
-                customerZone: req.body.selectedZone,
-                customerTime: req.body.timeSelected,
+                timeZone: req.body.selectedZone,
+                schedules: schedules,
                 charge: charge
             }
 
