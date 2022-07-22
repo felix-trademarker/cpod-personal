@@ -18,11 +18,12 @@ exports.makeid = function(length) {
 }
 
 exports.getEncodedEmail = function(email) {
-    return Base64.encode(email)
+    return code ? Base64.encode(email) : code
 }
 
 exports.getEncodedDecoded = function(code) {
-    return Base64.decode(code)
+    
+    return code ? Base64.decode(code) : code
 }
 
 exports.checkValidEmail = function(email) {
