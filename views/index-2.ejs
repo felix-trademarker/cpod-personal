@@ -313,7 +313,7 @@
         console.log("checking", this.customerEmail);
         if (this.customerEmail) {
 
-          let customerInfo = await fetch('http://localhost:9090/personal/api/v1/checkEmail/'+this.customerEmail)
+          let customerInfo = await fetch('https://chinesepod.com/personal/api/v1/checkEmail/'+this.customerEmail)
           .then(response => response.json());
 
           this.customerData = customerInfo
