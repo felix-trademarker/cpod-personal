@@ -197,143 +197,25 @@
                         <div class="form-row">
                           <label for="card-element">Credit or debit card:</label>
                           <div id="card-element" class="StripeElement StripeElement--empty"></div>
-                          <!-- Used to display Element errors -->
+       
                           <div id="card-errors" role="alert"></div>
                           <label>Name on card:</label>
                           <input class="ccInput" name="nameOnCard" type="text" placeholder="eg:John Doe">
                            
-                          <!-- <label>Street address Line 1:</label>
-                          <input class="ccInput" name="addreeLine1" type="text">
-                          
-                          <label>Street Address Line 2:</label>
-                          <input class="ccInput" name="addreeLine2" type="text">
-                          <div id="citystatezip" class="row row-user">
-                           <div class="col-6 col-md-6">
-                            <input id="us_city" type="text" class="ccInput" placeholder="City">
-                           </div>
-                          
-                           <div class="col-3 col-md-2">
-                            <select id="us_state" class="ccInput" aria-label="State">
-                               <option value="AL">AL</option>
-                               <option value="AK">AK</option>
-                               <option value="AZ">AZ</option>
-                               <option value="AR">AR</option>
-                               <option value="CA">CA</option>
-                               <option value="CO">CO</option>
-                               <option value="CT">CT</option>
-                               <option value="DE">DE</option>
-                               <option value="FL">FL</option>
-                               <option value="GA">GA</option>
-                               <option value="HI">HI</option>
-                               <option value="ID">ID</option>
-                               <option value="IN">IN</option>
-                               <option value="IA">IA</option>
-                               <option value="KS">KS</option>
-                               <option value="KY">KY</option>
-                               <option value="LA">LA</option>
-                               <option value="MA">MA</option>
-                               <option value="MD">MD</option>
-                               <option value="ME">ME</option>
-                               <option value="MI">MI</option>
-                               <option value="MS">MS</option>
-                               <option value="MO">MO</option>
-                               <option value="MT">MT</option>
-                               <option value="MN">MN</option>
-                               <option value="MS">MS</option>
-                               <option value="MO">MO</option>
-                               <option value="MT">MT</option>
-                               <option value="NE">NE</option>
-                               <option value="NV">NV</option>
-                               <option value="NH">NH</option>
-                               <option value="NJ">NJ</option>
-                               <option value="NM">NM</option>
-                               <option value="NY">NY</option>
-                               <option value="NC">NC</option>
-                               <option value="ND">ND</option>
-                               <option value="OH">OH</option>
-                               <option value="OK">OK</option>
-                               <option value="OR">OR</option>
-                               <option value="PA">PA</option>
-                               <option value="RI">RI</option>
-                               <option value="SC">SC</option>
-                               <option value="SD">SD</option>
-                               <option value="TN">TN</option>
-                               <option value="TX">TX</option>
-                               <option value="UT">UT</option>
-                               <option value="VT">VT</option>
-                               <option value="VA">VA</option>
-                               <option value="WA">WA</option>
-                               <option value="WV">WV</option>
-                               <option value="WI">WI</option>
-                               <option value="WY">WY</option>
-                            </select>
-                           </div>
-                           <div class="col-3">
-                            <input id="zip" type="text" class="ccInput" placeholder="ZIP">
-                           </div>
-                          </div> -->
-                          <!-- <span>Your Order</span> -->
-                          
-                          <!-- <label>Please indicate preferred platform</label>
-                          <div class="form-check">
-                            <input class="form-check-input" type="radio" value="zoom" name="platform" id="zoom">
-                            <label class="form-check-label" for="zoom">Zoom</label>
-                          </div>
-                          <div class="form-check">
-                            <input onclick="getPlatformInfo('iptGMAddress')" class="form-check-input" type="radio" value="Google Meet" name="platform" id="gooleMeet">
-                            <label class="form-check-label" for="gooleMeet">Google Meet</label>
-                          </div>
-                          <div class="form-check">
-                            <input onclick="getPlatformInfo('iptSkypeID')" class="form-check-input" type="radio" value="skype" name="platform" id="skype">
-                            <label class="form-check-label" for="skype">Skype</label>
-                          </div>
-                          <div class="form-check">
-                            <input class="form-check-input" type="radio" value="wechat" name="platform" id="wechat">
-                            <label class="form-check-label" for="wechat">Wechat</label>
-                          </div>
-                          <label id="iptSkypeID" class="d-none">Your Skype ID:
-                            <input class="ccInput" name="skypeId" type="text">
-                          </label>
-                          
-                          <label id="iptGMAddress" class="d-none">Your GMail address:
-                          <input class="ccInput" name="gmailAdress" type="email">
-                          </label>
-                          
-                          <label>Phone number:</label>
-                          <input class="ccInput m-0" name="gmailAdress" type="text">
-                          
-                          <small>(this helps us to contact you if there is an issue with the platforms above)</small>
-                            <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="" id="allowSMS">
-                            <label class="form-check-label" for="allowSMS">Please check if we can send SMS to the number above</label>
-                          </div>
-                          <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="" id="allowSMSb4">
-                            <label class="form-check-label" for="allowSMSb4"> Please check if you would like REMINDER SMS 20 minutes before each class</label>
-                          </div>
-                          <div class="form-check">
-                            <input onclick="checkTerms()" class="form-check-input" type="checkbox" value="" id="agreeWithTerms">
-                            <label class="form-check-label" for="agreeWithTerms"> I have read the TERMS AND CONDITIONS for Online Live Classes and the Money Back Guarantee.</label>
-                          </div> -->
-                          
-                          <!-- <button class="btn btn-danger w-100">Order</button> -->
                         </div>
                         
                       </div>
 
-                      <div class="row g-3">
+                      <div v-if="customerData " class="row g-3">
                         <div class="col-auto">
-                          <div v-if="customerData && customerData.status && !otherCard" class="form-group text-right">
+                          <div v-if="!otherCard" class="form-group text-right">
                             <button type="button" @click="submitForm" class="btn btn-danger btn-lg">Charge Card ending {{ customerData.data.card.last4 }}</button>
                           </div>
 
-                          <div v-if="customerData && customerData.status && otherCard" class="form-group text-right">
+                          <div v-if="otherCard" class="form-group text-right">
                             <button type="button" @click="submitForm" class="btn btn-danger btn-lg">Place Order $299</button>
                           </div>
   
-                          <div v-if="!customerData || !customerData.status" class="form-group text-right">
-                            <button type="button" class="btn btn-danger btn-lg" disabled>Place Order $299</button>
-                          </div>
 
                         </div>
 
@@ -345,6 +227,7 @@
                         </div>
 
                       </div>
+                      <p v-if="!customerData" class="text-danger">Sorry, We could not find any active ChinesePod subscription.</p>
           
                     </div> <!-- card body -->
 

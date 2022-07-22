@@ -58,7 +58,7 @@ conn.connectToServer( function( err, client ) { // MAIN MONGO START
 
   console.log("*** DATETIME:", app.locals.moment().format("YYYY MM DD, HH:mm:ss"));
 
-  // updaterService.createEmailCode()
+  updaterService.createEmailCode()
 
 })
 
