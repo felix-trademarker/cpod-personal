@@ -8,14 +8,26 @@ var Model = require('./../models/_model')
 exports.index = async function(req, res, next) {
 
     let ip = req.ip;
+    const regexExp = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/gi;
     
     // USED ONLY FOR DEV
     if (req.ip == "::1") {
         ip = '69.162.81.155'
     }
 
+    let decodedEmail = req.params.email
+
+    let isValidEmail = res.app.locals.helpers.checkValidEmail(req.params.email)
+
+    if (isValidEmail) {
+        console.log("valid email");
+        decodedEmail = req.params.email
+    } else {
+        decodedEmail = res.app.locals.helpers.getEncodedDecoded(req.params.email)
+    }
+
     if (req.params.email) {
-        res.cookie('custEmail',req.params.email, { maxAge: 900000, httpOnly: true });
+        res.cookie('custEmail',decodedEmail, { maxAge: 900000, httpOnly: true });
     }
 
     let geo = geoip.lookup(ip);
@@ -54,7 +66,7 @@ exports.index = async function(req, res, next) {
         clientTimezone: clientTimezone,
         timeTable: timeTable,
         timeZone: timeZone,
-        custEmail: req.params.email
+        custEmail: decodedEmail
     });
     
   

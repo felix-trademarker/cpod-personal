@@ -9,6 +9,8 @@ const session = require('express-session');
 var lessMiddleware = require('less-middleware');
 var cookieParser = require('cookie-parser');
 
+let updaterService = require('./services/updaterService')
+
 var app = express();
 
 
@@ -56,10 +58,8 @@ conn.connectToServer( function( err, client ) { // MAIN MONGO START
 
   console.log("*** DATETIME:", app.locals.moment().format("YYYY MM DD, HH:mm:ss"));
 
-  // testService.addCommentToVideos()
-  // testService.addReplyCommentToVideos()
+  // updaterService.createEmailCode()
 
-  // testService.updateAssignments()
 })
 
 
