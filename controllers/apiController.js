@@ -19,7 +19,7 @@ exports.checkEmail = async function(req, res, next) {
 
         let customerId = customers.data[0].id
         let customerSource = customers.data[0].default_source
-        console.log(customerId, customerSource);
+        console.log(customers.data[0]);
         const card = await stripe.customers.retrieveSource(
             "'"+customerId+"'",
             "'"+customerSource+"'"
