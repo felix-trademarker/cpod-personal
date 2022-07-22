@@ -17,10 +17,9 @@ exports.checkEmail = async function(req, res, next) {
         });
     } else {
 
-        console.log("customers data",customers.data);
-        console.log("customers length",customers.data.length);
-        let customerId = customers.data[(customers.data.length - 1)].id
-        let customerSource = customers.data[(customers.data.length - 1)].default_source
+        let customerId = customers.data[0].id
+        let customerSource = customers.data[0].default_source
+        console.log(customerId, customerSource);
         const card = await stripe.customers.retrieveSource(
             "'"+customerId+"'",
             "'"+customerSource+"'"
