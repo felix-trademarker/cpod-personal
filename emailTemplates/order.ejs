@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="">
+        <title>ChinesePod In Person Online Classes</title>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Slab:300,400,600,700">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,600,700">
+
+        <style>
+
+            .footer{
+              margin-top: 40px;
+            }
+        </style>
+    </head>
+    <body class="cPiPOnlineClasses">
+        <div class="container-fluid p-0">
+                
+            <div class="container">
+                <div class="row">
+                    <div class="col">
+                    <p>Hi Admin,</p>
+                    <p>A new order has been placed</p>
+                    <table border='1'>
+                    <tr>
+                        <th style="padding:10px;text-align:left">Order #</th>
+                        <th style="padding:10px;text-align:left">Customer</th>
+                        <th style="padding:10px;text-align:left">Description</th>
+                        <th style="padding:10px;text-align:left">Schedule</th>
+                        <th style="padding:10px;text-align:left">Amount(USD)</th>
+                    </tr>
+                    <tr>
+                        <td style="padding:10px"><%= orders.orderNo %></td>
+                        <td style="padding:10px"><%= orders.customerEmail %></td>
+                        <td style="padding:10px"><%= orders.description %></td>
+                        <td style="padding:10px">
+                          Zone: <%= orders.timeZone %><br>
+                          <% if( Array.isArray(orders.schedules.date) ) { %>
+                            Schedules:
+                            <ul class="list">
+                            <% for(let i=0; i < orders.schedules.date.length; i++){  %>
+                              <li><%= orders.schedules.date[i] %> - <%= orders.schedules.time[i] %></li>
+                            <% } %>
+                            </ul>
+                          <% } else { %>
+                            Schedule: <%= orders.schedules.date %> - <%= orders.schedules.time %>
+                          <% } %>
+                        </td>
+                        <td style="padding:10px">$<%= orders.amount %></td>
+                    </tr>
+                    </table>
+                    </div>
+                </div>
+            </div>
+            
+
+            <!--footer starts here-->
+            <footer id="page-footer" class="footer">
+                <div class="container-fluid">
+                    <div class="row navbar navbar-light justify-content-between flex-row-reverse">
+                    
+                    <div class="col-xs-12 col-md-6 text-center">
+                        <small class="copy">Copyright © 2022 ChinesePod LLC</small>
+                        
+                    </div>
+
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </body>
+</html>

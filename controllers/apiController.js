@@ -16,10 +16,21 @@ exports.checkEmail = async function(req, res, next) {
             message:"Sorry! This promo is only for existing customers!"
         });
     } else {
+
+        let customerId = customers.data[customers.data.length - 1].id
+        let customerSource = customers.data[customers.data.length - 1].default_source
+        const card = await stripe.customers.retrieveSource(
+            customerId,
+            customerSource
+        );
+
+        let data = customers.data[customers.data.length - 1]
+        data.card = card
+
         res.json({
             status:true,
             message:"Customer Exists!",
-            data: customers.data[0]
+            data: data
         });
     }
 

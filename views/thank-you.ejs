@@ -1,8 +1,8 @@
 
 
 <div id="thankYouApp" class="container">
-  <div class="row justify-content-center box-bg-container">
-    <div class="col-12 text-center">
+  <div class="row justify-content-center box-bg-container mt-5 mb-5">
+    <div class="col-8">
       <h1 class="text-success">Thank you for your order!</h1>
     <% if(orders) { %>
       <p class="mb-3">Your order number is: <strong><%= orders.orderNo %></strong></p>   
@@ -17,15 +17,25 @@
         </tr>
         <tr>
           <td><%= orders.orderNo %></td>
-          <td><%= orders.description %><br>
-            Zone: <%= orders.customerZone %><br>
-            Time Schedule: <%= orders.customerTime %>
+          <td><%= orders.description %> <br>
+            
+              <% if( Array.isArray(orders.schedules.date) ) { %>
+                Zone: <%= orders.timeZone %>
+                <ul class="list">
+                <% for(let i=0; i < orders.schedules.date.length; i++){  %>
+                  <li><%= orders.schedules.date[i] %> - <%= orders.schedules.time[i] %></li>
+                <% } %>
+                </ul>
+              <% } else { %>
+                Schedule: <%= orders.schedules.date %> - <%= orders.schedules.time %>
+              <% } %>
+            
           </td>
           <td>10 classes</td>
           <td>$299.00</td>
         </tr>
       </table>
-      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Facilis, quisquam perferendis consequuntur doloremque eius quidem, voluptas cum aut nulla cupiditate dolore, sit quos nesciunt deserunt debitis unde et perspiciatis exercitationem.</p>
+      <p>Boost your learning pace with the ChinesePod Online 10 Classes - and get your personalized classes a real native teacher over video chat! Our teachers know the ChinesePod curriculum inside out and can help you practice real live conversations.</p>
     <% } else { %>
       <p class="mb-3">Your order number is: <strong>XX-XXXX</strong></p>   
 

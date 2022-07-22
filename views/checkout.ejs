@@ -70,16 +70,6 @@
 
                       <div class="col">
                         <div class="form-group">
-                          <!-- <input type="text" 
-                            placeholder="Select Class Time" 
-                            name="timeSched[]" 
-                            class="form-control ccInput" 
-                            v-model="schedules[ndx].time" 
-                            data-bs-toggle="modal" 
-                            data-bs-target="#exampleModal"
-                            @click="setTimeScheduleNdx(ndx)"
-                            readonly
-                          > -->
                           <select class="form-control ccInput" name="time" v-model="schedules[ndx].time">
                             <option value="" disabled>Select TimeZone</option>
                             <option value="8:00AM - 9:00AM">8:00AM - 9:00AM</option>
@@ -134,68 +124,6 @@
     </div>
   </div>
 
-
-  <!-- Modal -->
-  <!-- <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Class Schedule</h5>
-        </div>
-        <div class="modal-body">
-          <div class="row g-3 mt-2">                            
-                
-            <div class="col">
-              <p>Select class schedule ({{ schedules[timeSchedulesNdx].day }})</p>
-              <table style="font-size: 14px;" class="table tbl-timeTable table-striped">
-                <thead class="thead-dark">
-                  <tr>  
-                    <th style="width:25%"></th>
-                    <th style="width:15%">Mon</th>
-                    <th style="width:15%">Tue</th>
-                    <th style="width:15%">Wed</th>
-                    <th style="width:15%">Thu</th>
-                    <th style="width:15%">Fri</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <% var counter=0; for(var i=0; i < timeTable.length; i++) { %>
-                  <tr>
-                    <th><%= timeTable[0].time[i] %></th>
-                    <% for(var t=0; t < timeTable.length; t++) { %>
-                      <td :class="timeTbl[<%= counter %>] ? 'Booked' : '<%= timeTable[t].availability[i] %>'">
-
-                        <div class="row">
-                          
-                          <div class="col-auto d-none" style="padding-right: 0;">
-                            <div class="form-group form-switch">
-                              <input id="inpCHK-<%= counter %>" class="form-check-input" type="radio" name="timeSelected" @change="updateTimeTbl(<%= counter %>)" value="<%= timeTable[t].day %>: <%= timeTable[t].time[i] %>" v-model="timeSelected">
-                            </div>
-                          </div>
-                          <div class="col">
-                            <label :class="'btn btn-sm btn-outline-'+(timeTbl[<%= counter %>] ? 'success':'danger')" for="inpCHK-<%= counter %>">{{ timeTbl[<%= counter %>] ? 'Booked' : 'Set' }}</label>
-                          </div>
-
-                        </div>
-                      </td>
-                    <% counter++; } %>
-                      
-                  </tr>
-                  <% } %>
-                </tbody>
-
-              </table>
-            </div>
-
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal" @click="setTimeSchedule()">Save changes</button>
-        </div>
-      </div>
-    </div>
-  </div> -->
-
 </section>
 
 
@@ -204,7 +132,7 @@
   var vueApp = new Vue({
     el: "#checkout-content",
     data: {
-      customerEmail: '',
+      customerEmail: '<%= custEmail %>',
       customerData: null,
       preferedContact: '',
       selectedZone: '',
@@ -277,23 +205,6 @@
         this.schedules.splice(ndx,1)
       },
 
-      // setTimeScheduleNdx : function(ndx) {
-      //   this.timeSchedulesNdx = ndx
-      // },
-
-      // setTimeSchedule : function() {
-      //   this.schedules[this.timeSchedulesNdx].time = this.timeSelected
-      //   this.timeSelected = ''
-      //   this.timeTbl = [
-      //     false, false, false, false, false,
-      //     false, false, false, false, false,
-      //     false, false, false, false, false,
-      //     false, false, false, false, false,
-      //     false, false, false, false, false
-      //   ]
-      // }
-
-
     },
     computed: {
 
@@ -317,5 +228,5 @@
   })
 
   vueApp.selectedZone = "<%= timeZone[clientTimezone].join(',') %>"
-
+  vueApp.checkEmail()
 </script>

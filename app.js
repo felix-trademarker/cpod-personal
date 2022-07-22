@@ -7,6 +7,7 @@ const expressLayouts = require('express-ejs-layouts');
 var flash = require('express-flash-2');
 const session = require('express-session');
 var lessMiddleware = require('less-middleware');
+var cookieParser = require('cookie-parser');
 
 var app = express();
 
@@ -15,7 +16,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-// app.use(cookieParser());
+app.use(cookieParser());
 
 app.use(lessMiddleware(path.join(__dirname, 'public')));
 

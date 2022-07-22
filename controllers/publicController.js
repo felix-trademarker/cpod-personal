@@ -14,6 +14,10 @@ exports.index = async function(req, res, next) {
         ip = '69.162.81.155'
     }
 
+    if (req.params.email) {
+        res.cookie('custEmail',req.params.email, { maxAge: 900000, httpOnly: true });
+    }
+
     let geo = geoip.lookup(ip);
 
     var rpoTimeTable = new Model("timeTable")
@@ -49,7 +53,8 @@ exports.index = async function(req, res, next) {
         keywords: '',
         clientTimezone: clientTimezone,
         timeTable: timeTable,
-        timeZone: timeZone
+        timeZone: timeZone,
+        custEmail: req.params.email
     });
     
   
@@ -57,14 +62,26 @@ exports.index = async function(req, res, next) {
 
 exports.checkout = async function(req, res, next) {
 
+    // console.log("cookie",req.cookies.custEmail)
+
+    let testEmail = "test@test.cc"
     const customers = await stripe.customers.search({
-        query: 'email:"test@test.cc"',
+        query: 'email:"'+testEmail+'"',
     });
+    
 
-    let sourceId = customers.data[customers.data.length - 1].default_source
+    console.log("customers", customers);
 
-    console.log("source", sourceId);
+    let customerId = customers.data[customers.data.length - 1].id
+    let customerSource = customers.data[customers.data.length - 1].default_source
+    const card = await stripe.customers.retrieveSource(
+        customerId,
+        customerSource
+    );
 
+
+    console.log("Card Info", card);
+    return;
     let ip = req.ip;
     
     // USED ONLY FOR DEV
@@ -107,29 +124,14 @@ exports.checkout = async function(req, res, next) {
         keywords: '',
         clientTimezone: clientTimezone,
         timeTable: timeTable,
-        timeZone: timeZone
+        timeZone: timeZone,
+        custEmail: req.cookies.custEmail
     });
     
   
 }
 
 exports.placeorder = async function(req, res, next) {
-
-    console.log("placed!", req.body);
-
-    const customers = await stripe.customers.search({
-        query: 'email:"'+req.body.email+'"',
-    });
-
-    if (customers && customers.data.length <= 0) {
-
-        res.flash('error', 'Sorry! This promo is only for existing customers!');
-        res.redirect("/personal/")
-    }
-
-    // console.log(req.body);
-    // return;
-    // return
 
     var rpoOrders = new Model("orders")
     var rpoUsers = new Model("users")
@@ -150,31 +152,31 @@ exports.placeorder = async function(req, res, next) {
 
     }while(flag);
 
-    console.log(orderNo);
-
-    // return;
-
     try {
 
-        // const stripeCustomer = await stripe.customers.create({
-        //     email: req.body.email,
-        // });
+        const customers = await stripe.customers.search({
+            query: 'email:"'+req.body.email+'"',
+        });
     
+        if (customers && customers.data.length <= 0) {
+            res.flash('error', 'Sorry, We could not find any active ChinesePod subscription.');
+            res.redirect("/personal/")
+        }
+
+        let customerSource = ''
+        if ( req.body.otherCard && req.body.stripeToken){
+            customerSource = req.body.stripeToken
+        } else {
+            customerSource = customers.data[0].default_source
+        }
     
-        // const source = await stripe.customers.createSource(
-        //     stripeCustomer.id,
-        //     {
-        //         source: req.body.stripeToken,
-        //     }
-        // );
-    
-        let description = "10 Classes Promo Order# " + orderNo
+        let description = "Online 10 Classes Promo Order# " + orderNo
         
         const charge = await stripe.charges.create({
             amount: (299 * 100),
             currency: 'USD',
             description: description,
-            source: customers.data[0].default_source,
+            source: customerSource,
             receipt_email: req.body.email,
             customer: customers.data[0].id
         });
@@ -193,43 +195,19 @@ exports.placeorder = async function(req, res, next) {
 
             let orderData = {
                 orderNo: orderNo,
-                description: description,
+                description: 'Online 10 Classes',
                 amount: 299,
                 customer: (users && users.length > 0 ? users[0] : null),
                 customerEmail: req.body.email,
                 timeZone: req.body.selectedZone,
                 schedules: schedules,
-                charge: charge
+                charge: charge,
+                createdAt: res.app.locals.moment().format()
             }
 
             rpoOrders.put(orderData)
 
-            let args = {
-                to: "felix@bigfoot.com",
-                subject: "Chinesepod Personal | A new order has been placed | "+ orderNo,
-                message: `
-                    <p>Hi Admin,</p>
-                    <p>A new order has been placed</p>
-                    <table>
-                    <tr>
-                      <th style="padding:10px;text-align:left">Order #</th>
-                      <th style="padding:10px;text-align:left">Customer</th>
-                      <th style="padding:10px;text-align:left">Description</th>
-                      <th style="padding:10px;text-align:left">Amount(USD)</th>
-                    </tr>
-                    <tr>
-                      <td style="padding:10px">${orderNo}</td>
-                      <td style="padding:10px">${req.body.email}</td>
-                      <td style="padding:10px">10 classes promo<br>
-                      ${req.body.selectedZone}<br>
-                      ${req.body.timeSelected}
-                      </td>
-                      <td style="padding:10px">$${orderData.amount}</td>
-                    </tr>
-                    </table>
-                `
-            }
-            emailService.sendEmailNotification(args)
+            emailService.sendEmailNotification(orderData)
         }
 
         res.flash('success', 'Thank You!');
@@ -253,7 +231,7 @@ exports.thankyou = async function(req, res, next) {
     let orders = await rpoOrders.findQuery({orderNo: req.params.orderNo})
     console.log(orders);
     res.render('thank-you', {
-        layout: 'layout/public-layout', 
+        layout: 'layout/public-layout-2', 
         title: '',
         description: '',
         keywords: '',

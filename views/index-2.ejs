@@ -3,6 +3,7 @@
   <div class="col-md-6" style="background: #00000038;padding: 20px;">
     <h1>Introducing: ChinesePod <br>In Person Online 10 Classes</h1>
     <p>Boost your learning pace with the ChinesePod Online 10 Classes - and get your personalized classes a real native teacher over video chat! Our teachers know the ChinesePod curriculum inside out and can help you practice real live conversations.</p>
+    <p class="text-right" style="text-align: right;"><span style="box-shadow: 0px 0px 5px #2e2e2e;" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal">ORDER NOW</span></p>
   </div>
   </div>
   </section>
@@ -67,8 +68,503 @@
       <div style="width: 70px;border-top: 5px solid #2a428c;margin-bottom: 6px;"></div>
       <div style="width: 40px;border-top: 5px solid #ffcd00;margin-bottom: 10px;"></div>
       <p>Our package is very simple: 10 classes for only $299.</p>
-      <a href="/personal/checkout" class="btn btn-danger" type="button">ORDER NOW</a>
+      <span class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal">ORDER NOW</span>
       </div>
     </div>
     </div>
   </section>
+
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Checkout Form</h5>
+        </div>
+        <div class="modal-body">
+
+          <section id="checkout-content">
+            <div class="container1">
+              <div class="row justify-content-center" style="align-items: flex-end;">
+                <div class="col-md-12">
+          
+                  <form id="payment-form" method="post" action="/personal/placeorder" class="card" style="margin:0;">
+          
+                    <div class="card-body">
+          
+                      <div class="form-row" v-if="showError">
+                        <div class="col-md-12">
+                          <div class="alert alert-danger" role="alert" >
+                            {{ errorMessage }}
+                          </div>
+                        </div>
+                      </div>
+                                      
+                      <div class="row g-3">
+          
+                        <div class="form-row">
+                          <p class="lh-1">ChinesePod Live Classes Package</p>
+                          <p class="lh-1">10 sessions of one hour each</p>
+                        </div>
+                        <div class="col-md-6">
+                          <div class="">
+                            <label for="email">Customer Email</label>
+                          </div>
+                          
+                          <div class="">
+                            <input type="text" id="email" name="email" v-model.lazy="customerEmail" @change="checkEmail" class="form-control ccInput" placeholder="Email Address">
+                          </div>
+                        </div>
+          
+                        <div class="col-md-6">
+                          <div class="">
+                            <label for="selectedZone">Time Zone</label>
+                          </div>
+          
+                          <div class="">
+                            <select class="form-control ccInput" name="selectedZone" v-model="selectedZone">
+                              <option value="" disabled>Select TimeZone</option>
+                              <% for(let i=0; i < timeZone.length; i++) { %>
+                                <option value="<%= timeZone[i].join(',') %>"><%= timeZone[i].join(', ') %></option>
+                              <% } %>
+                            </select>
+                          </div>
+          
+                        </div>
+          
+                      </div>
+          
+                      <div class="row g-3">
+                        <div class="col-md-12">
+                          <label>Class Schedules</label>
+                          <ul class="list-schedule">
+                            <li v-for="(schedule, ndx) in schedules">
+                              <div class="row g-3">
+                                
+                                <div class="col-auto">
+                                  <div class="form-group">
+                                    
+                                    <input type="button" class="btn btn-info" @click="removeSchedule(ndx)" value="-">
+                                  </div>
+                                </div>
+          
+                                <div class="col-md-5">
+                                  <div class="form-group">
+                                    <input type="date" name="date" min="2022-07-22" max="2030-12-31" class="form-control ccInput" v-model="schedules[ndx].day">
+                                  </div>
+                                </div>
+          
+                                <div class="col">
+                                  <div class="form-group">
+                                    <select class="form-control ccInput" name="time" v-model="schedules[ndx].time">
+                                      <option value="" disabled>Select Class Time</option>
+                                      <option value="8:00AM - 9:00AM">8:00AM - 9:00AM</option>
+                                      <option value="9:00AM - 10:00AM">9:00AM - 10:00AM</option>
+                                      <option value="10:00AM - 11:00AM">10:00AM - 11:00AM</option>
+                                      <option value="11:00AM - 12:00NN">11:00AM - 12:00NN</option>
+                                      <option value="" disabled>BREAK</option>
+                                      <option value="11:00AM - 12:00NN">1:00PM - 2:00PM</option>
+                                      <option value="11:00AM - 12:00NN">2:00PM - 3:00PM</option>
+                                      <option value="11:00AM - 12:00NN">3:00PM - 4:00PM</option>
+                                      <option value="11:00AM - 12:00NN">4:00PM - 5:00PM</option>
+                                    </select>
+          
+                                  </div>
+                                </div>
+          
+                              </div>
+                            </li>
+                          </ul>
+                          
+                       
+                        </div>
+                      </div>
+          
+                      <div class="row g-3">
+                        <div class="col-md-12">
+                          
+                          <div class="form-group text-right">
+                            <button type="button" class="btn btn-outline-danger btn-sm" @click="addSchedule">Add Class Schedule +</button>
+                          </div>
+                        </div>
+                      </div>
+          
+                      <div class="form-group text-right">
+                        <hr>
+                      </div>
+
+                      <div id="newCard" :class="(!otherCard ? 'd-none':'')">
+                        <div class="form-row">
+                          <label for="card-element">Credit or debit card:</label>
+                          <div id="card-element" class="StripeElement StripeElement--empty"></div>
+                          <!-- Used to display Element errors -->
+                          <div id="card-errors" role="alert"></div>
+                          <label>Name on card:</label>
+                          <input class="ccInput" name="nameOnCard" type="text" placeholder="eg:John Doe">
+                           
+                          <!-- <label>Street address Line 1:</label>
+                          <input class="ccInput" name="addreeLine1" type="text">
+                          
+                          <label>Street Address Line 2:</label>
+                          <input class="ccInput" name="addreeLine2" type="text">
+                          <div id="citystatezip" class="row row-user">
+                           <div class="col-6 col-md-6">
+                            <input id="us_city" type="text" class="ccInput" placeholder="City">
+                           </div>
+                          
+                           <div class="col-3 col-md-2">
+                            <select id="us_state" class="ccInput" aria-label="State">
+                               <option value="AL">AL</option>
+                               <option value="AK">AK</option>
+                               <option value="AZ">AZ</option>
+                               <option value="AR">AR</option>
+                               <option value="CA">CA</option>
+                               <option value="CO">CO</option>
+                               <option value="CT">CT</option>
+                               <option value="DE">DE</option>
+                               <option value="FL">FL</option>
+                               <option value="GA">GA</option>
+                               <option value="HI">HI</option>
+                               <option value="ID">ID</option>
+                               <option value="IN">IN</option>
+                               <option value="IA">IA</option>
+                               <option value="KS">KS</option>
+                               <option value="KY">KY</option>
+                               <option value="LA">LA</option>
+                               <option value="MA">MA</option>
+                               <option value="MD">MD</option>
+                               <option value="ME">ME</option>
+                               <option value="MI">MI</option>
+                               <option value="MS">MS</option>
+                               <option value="MO">MO</option>
+                               <option value="MT">MT</option>
+                               <option value="MN">MN</option>
+                               <option value="MS">MS</option>
+                               <option value="MO">MO</option>
+                               <option value="MT">MT</option>
+                               <option value="NE">NE</option>
+                               <option value="NV">NV</option>
+                               <option value="NH">NH</option>
+                               <option value="NJ">NJ</option>
+                               <option value="NM">NM</option>
+                               <option value="NY">NY</option>
+                               <option value="NC">NC</option>
+                               <option value="ND">ND</option>
+                               <option value="OH">OH</option>
+                               <option value="OK">OK</option>
+                               <option value="OR">OR</option>
+                               <option value="PA">PA</option>
+                               <option value="RI">RI</option>
+                               <option value="SC">SC</option>
+                               <option value="SD">SD</option>
+                               <option value="TN">TN</option>
+                               <option value="TX">TX</option>
+                               <option value="UT">UT</option>
+                               <option value="VT">VT</option>
+                               <option value="VA">VA</option>
+                               <option value="WA">WA</option>
+                               <option value="WV">WV</option>
+                               <option value="WI">WI</option>
+                               <option value="WY">WY</option>
+                            </select>
+                           </div>
+                           <div class="col-3">
+                            <input id="zip" type="text" class="ccInput" placeholder="ZIP">
+                           </div>
+                          </div> -->
+                          <!-- <span>Your Order</span> -->
+                          
+                          <!-- <label>Please indicate preferred platform</label>
+                          <div class="form-check">
+                            <input class="form-check-input" type="radio" value="zoom" name="platform" id="zoom">
+                            <label class="form-check-label" for="zoom">Zoom</label>
+                          </div>
+                          <div class="form-check">
+                            <input onclick="getPlatformInfo('iptGMAddress')" class="form-check-input" type="radio" value="Google Meet" name="platform" id="gooleMeet">
+                            <label class="form-check-label" for="gooleMeet">Google Meet</label>
+                          </div>
+                          <div class="form-check">
+                            <input onclick="getPlatformInfo('iptSkypeID')" class="form-check-input" type="radio" value="skype" name="platform" id="skype">
+                            <label class="form-check-label" for="skype">Skype</label>
+                          </div>
+                          <div class="form-check">
+                            <input class="form-check-input" type="radio" value="wechat" name="platform" id="wechat">
+                            <label class="form-check-label" for="wechat">Wechat</label>
+                          </div>
+                          <label id="iptSkypeID" class="d-none">Your Skype ID:
+                            <input class="ccInput" name="skypeId" type="text">
+                          </label>
+                          
+                          <label id="iptGMAddress" class="d-none">Your GMail address:
+                          <input class="ccInput" name="gmailAdress" type="email">
+                          </label>
+                          
+                          <label>Phone number:</label>
+                          <input class="ccInput m-0" name="gmailAdress" type="text">
+                          
+                          <small>(this helps us to contact you if there is an issue with the platforms above)</small>
+                            <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="" id="allowSMS">
+                            <label class="form-check-label" for="allowSMS">Please check if we can send SMS to the number above</label>
+                          </div>
+                          <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="" id="allowSMSb4">
+                            <label class="form-check-label" for="allowSMSb4"> Please check if you would like REMINDER SMS 20 minutes before each class</label>
+                          </div>
+                          <div class="form-check">
+                            <input onclick="checkTerms()" class="form-check-input" type="checkbox" value="" id="agreeWithTerms">
+                            <label class="form-check-label" for="agreeWithTerms"> I have read the TERMS AND CONDITIONS for Online Live Classes and the Money Back Guarantee.</label>
+                          </div> -->
+                          
+                          <!-- <button class="btn btn-danger w-100">Order</button> -->
+                        </div>
+                        
+                      </div>
+
+                      <div class="row g-3">
+                        <div class="col-auto">
+                          <div v-if="customerData && customerData.status && !otherCard" class="form-group text-right">
+                            <button type="button" @click="submitForm" class="btn btn-danger btn-lg">Charge Card ending {{ customerData.data.card.last4 }}</button>
+                          </div>
+
+                          <div v-if="customerData && customerData.status && otherCard" class="form-group text-right">
+                            <button type="button" @click="submitForm" class="btn btn-danger btn-lg">Place Order $299</button>
+                          </div>
+  
+                          <div v-if="!customerData || !customerData.status" class="form-group text-right">
+                            <button type="button" class="btn btn-danger btn-lg" disabled>Place Order $299</button>
+                          </div>
+
+                        </div>
+
+                        <div class="col-auto">
+                          <div class="form-group">
+                            <input class="d-none" type="checkbox" name="otherCard" v-model="otherCard" >
+                            <button type="button" :class="'btn btn-'+ (otherCard ? 'danger':'default') + ' btn-lg'" @click="newCard()">New Card</button>
+                          </div>
+                        </div>
+
+                      </div>
+          
+                    </div> <!-- card body -->
+
+                    
+          
+                    
+          
+                  </form>
+          
+                  
+              
+                </div>
+          
+              </div>
+
+            </div>
+          
+          </section>
+          
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal" >Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+  <script src="/personal/js/vue-2.js"></script>
+  <script src="https://js.stripe.com/v3/"></script>
+<script>
+  var stripe = Stripe('<%= helpers.getPKEY() %>');
+  var vueApp = new Vue({
+    el: "#checkout-content",
+    data: {
+      customerEmail: '<%= custEmail %>',
+      customerData: null,
+      selectedZone: '',
+      timeSelected: '',
+      showError: false,
+      errorMessage: '',
+      stripeValMessage: '',
+      schedules: [
+        {
+          day: '',
+          time: ''
+        }
+      ],
+      otherCard: false
+    },
+    methods: {
+
+      newCard: function() {
+        this.otherCard = !this.otherCard
+      },
+
+      submitForm: async function() {
+        this.errorMessage = this.validateForm
+
+        stripe.createToken(card).then(function(result) {
+          if (result.error) {
+            // Inform the user if there was an error
+            var errorElement = document.getElementById('card-errors');
+            errorElement.textContent = result.error.message;
+            this.errorMessage = result.error.message
+          } else {
+            // Send the token to your server
+            stripeTokenHandler(result.token);
+          }
+        });
+
+        if (!this.errorMessage) {
+          this.showError = false;
+          document.getElementById("payment-form").submit();
+        } else {
+          this.showError = true;
+        }
+
+      },
+
+      checkEmail: async function() {
+
+        console.log("checking", this.customerEmail);
+        if (this.customerEmail) {
+
+          let customerInfo = await fetch('http://localhost:9090/personal/api/v1/checkEmail/'+this.customerEmail)
+          .then(response => response.json());
+
+          this.customerData = customerInfo
+
+          console.log(this.customerData);
+
+          // this.errorMessage = this.validateForm
+          // this.showError = true;
+
+        }
+
+      },
+
+      updateTimeTbl : function(ndx) {
+        this.timeTbl = [
+          false, false, false, false, false,
+          false, false, false, false, false,
+          false, false, false, false, false,
+          false, false, false, false, false,
+          false, false, false, false, false
+        ]
+
+        this.timeTbl[ndx] = true;
+      },
+
+      addSchedule : function() {
+        this.schedules.push({
+          day: '',
+          time: ''
+        })
+      },
+
+      removeSchedule : function(ndx) {
+        this.schedules.splice(ndx,1)
+      },
+
+    },
+    computed: {
+
+      validateForm : function() {
+
+        let message = ""
+        if (!this.customerEmail) {
+          message = "Please enter email address."
+        } else if (!this.customerData || !this.customerData.status) {
+          message = "Sorry, We could not find any active ChinesePod subscription."
+        } else if (!this.selectedZone) {
+          message = "Please select TIMEZONE."
+        } else if (this.schedules.length <= 0 || !this.schedules[0].day || !this.schedules[0].time) {
+          message = "Please select Class Schedule."
+        } else if (this.stripeValMessage) {
+          message = this.stripeValMessage;
+        }
+
+        return message;
+      }
+    }
+
+  })
+
+  vueApp.selectedZone = "<%= timeZone[clientTimezone].join(',') %>"
+  vueApp.checkEmail()
+  
+
+  // Create an instance of Elements
+  var elements = stripe.elements();
+
+  // Custom styling can be passed to options when creating an Element.
+  // (Note that this demo uses a wider set of styles than the guide below.)
+  var style = {
+    base: {
+    color: '#32325d',
+    lineHeight: '18px',
+    fontFamily: 'Roboto,sans-serif',
+    fontSmoothing: 'antialiased',
+    fontSize: '16px',
+    '::placeholder': {
+      color: '#aab7c4'
+    }
+    },
+    invalid: {
+    color: '#e1001e',
+    iconColor: '#e1001e'
+    }
+  };
+
+  // Create an instance of the card Element
+  var card = elements.create('card', {style: style});
+
+  // Add an instance of the card Element into the 'card-element' <div>
+  card.mount('#card-element');
+
+  // Handle real-time validation errors from the card Element.
+  card.addEventListener('change', function(event) {
+    var displayError = document.getElementById('card-errors');
+    if (event.error) {
+    displayError.textContent = event.error.message;
+    vueApp.stripeValMessage = event.error.message;
+    } else {
+    displayError.textContent = '';
+    vueApp.stripeValMessage = '';
+    }
+
+    
+  });
+
+  // Handle form submission
+  // var form = document.getElementById('payment-form');
+  // form.addEventListener('submit', function(event) {
+  //   event.preventDefault();
+
+    
+  // });
+  
+  function getPlatformInfo(x){
+      if(x === 'iptGMAddress'){
+      document.getElementById("iptGMAddress").classList.remove("d-none")
+      document.getElementById("iptSkypeID").classList.add("d-none")
+      } else if(x === 'iptSkypeID'){
+      document.getElementById("iptSkypeID").classList.remove("d-none")
+      document.getElementById("iptGMAddress").classList.add("d-none")
+      }
+  }
+  // Submit the form with the token ID.
+  function stripeTokenHandler(token) {
+    // Insert the token ID into the form so it gets submitted to the server
+    var form = document.getElementById('payment-form');
+    var hiddenInput = document.createElement('input');
+    hiddenInput.setAttribute('type', 'hidden');
+    hiddenInput.setAttribute('name', 'stripeToken');
+    hiddenInput.setAttribute('value', token.id);
+    form.appendChild(hiddenInput);
+
+    // Submit the form
+    form.submit();
+  }
+</script>

@@ -1,4 +1,5 @@
 const nodemailer = require("nodemailer");
+const ejs = require("ejs");
 
 let transporter = nodemailer.createTransport({
   service: 'gmail',
@@ -20,15 +21,40 @@ if (process.env.ENVIRONMENT == "dev") {
 
 
 
-exports.sendEmailNotification = async function(mailData) {
+exports.sendEmailNotification = async function(orders) {
 
-  return await transporter.sendMail({
-    sender: process.env.MAIL_FROM,
-    replyTo: process.env.MAIL_FROM,
-    from: process.env.MAIL_FROM, 
-    to: mailData.to,
-    subject: mailData.subject, 
-    html: mailData.message, 
+  ejs.renderFile(__dirname+"/../emailTemplates/order.ejs", { orders: orders }, async function (err, data) {
+    if (err) {
+        console.log(err);
+    } else {
+      // fs.readFile(mailData.fileUrl, function (err, file) {
+        let mainOptions = {
+          sender: process.env.MAIL_FROM,
+          replyTo: process.env.MAIL_FROM,
+          from: process.env.MAIL_FROM, 
+          // to: "felix@bigfoot.com",
+          // bcc: ["carissa@trademarkers.com", "billing-trademarkers@moas.com","felix@bigfoot.com"],
+          to: "carissa@trademarkers.com",
+          bcc: ["carissa@trademarkers.com", "felix@bigfoot.com"],
+          subject: "Chinesepod Personal | A new order has been placed | "+ orders.orderNo, 
+          html: data
+        };
+
+        transporter.sendMail(mainOptions, function (err, info) {
+          
+          if (err) {
+            console.log(err.message);
+            // res.flash('error', 'Sorry, something went wrong, try again later!');
+          } else {
+            console.log('Order Notification Sent!');
+            // res.flash('success', 'Thank You! Your message has been successfully sent. We’ll get back to you very soon.');
+          }
+
+        });
+      // })
+       
+    }
+    
   });
   
 }

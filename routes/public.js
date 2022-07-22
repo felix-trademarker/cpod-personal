@@ -12,11 +12,12 @@ var router = express.Router();
 
 router.get([
     '/',
-    '/personal'
+    '/personal/',
+    '/personal/:email'
 ],publicController.index);
 
 router.get([
-    '/personal/checkout'
+    '/personal/form/checkout'
 ],publicController.checkout);
 
 router.get([
