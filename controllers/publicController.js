@@ -56,7 +56,7 @@ exports.index = async function(req, res, next) {
         clientTimezone = 2
     }
 
-    console.log(geo);
+    // console.log(geo);
 
     res.render('index-2', {
         layout: 'layout/public-layout-2', 

@@ -10,6 +10,7 @@ exports.checkEmail = async function(req, res, next) {
         query: 'email:"'+req.params.email+'"',
     });
 
+    console.log(customers.data)
     if (customers && customers.data.length <= 0) {
         res.json({
             status:false,
@@ -17,16 +18,32 @@ exports.checkEmail = async function(req, res, next) {
         });
     } else {
 
-        let customerId = customers.data[0].id
-        let customerSource = customers.data[0].default_source
-        console.log(customers.data[0]);
-        const card = await stripe.customers.retrieveSource(
-            "'"+customerId+"'",
-            "'"+customerSource+"'"
+        let customerId = customers.data[customers.data.length - 1].id
+        // let customerSource = customers.data[customers.data.length - 1].default_source
+        console.log(customers.data[customers.data.length - 1]);
+
+        const cards = await stripe.customers.listSources(
+            customerId,
+            {object: 'card', limit: 1}
         );
 
+        if (cards && cards.length > 0) {
+            data.card = cards[0]
+        }
+
+        console.log(cards);
+
         let data = customers.data[customers.data.length - 1]
-        data.card = card
+
+        // if (customerSource) {
+        //     const cards = await stripe.customers.listSources(
+        //         customerId,
+        //         {object: 'card', limit: 1}
+        //     );
+        //     data.card = card
+        // }
+        
+        
 
         res.json({
             status:true,
@@ -37,4 +54,20 @@ exports.checkEmail = async function(req, res, next) {
 
     
 
+}
+
+exports.encodeEmail = async function(req, res, next) {
+    let encodedEmail = res.app.locals.helpers.getEncodedEmail(req.params.email)
+
+    res.json({
+        string: encodedEmail
+    });
+}
+
+exports.decodeEmail = async function(req, res, next) {
+    let encodedEmail = res.app.locals.helpers.getEncodedDecoded(req.params.email)
+
+    res.json({
+        string: encodedEmail
+    });
 }

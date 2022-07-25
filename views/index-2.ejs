@@ -193,7 +193,7 @@
                         <hr>
                       </div>
 
-                      <div id="newCard" :class="(!otherCard ? 'd-none':'')">
+                      <div id="newCard" :class="(!otherCard || !customerData.status ? 'd-none':'')">
                         <div class="form-row">
                           <label for="card-element">Credit or debit card:</label>
                           <div id="card-element" class="StripeElement StripeElement--empty"></div>
@@ -206,9 +206,9 @@
                         
                       </div>
 
-                      <div v-if="customerData " class="row g-3">
+                      <div v-if="customerData && customerData.status" class="row g-3">
                         <div class="col-auto">
-                          <div v-if="!otherCard" class="form-group text-right">
+                          <div v-if="customerData.data.card" class="form-group text-right">
                             <button type="button" @click="submitForm" class="btn btn-danger btn-lg">Charge Card ending {{ customerData.data.card.last4 }}</button>
                           </div>
 
@@ -227,7 +227,7 @@
                         </div>
 
                       </div>
-                      <p v-if="!customerData" class="text-danger">Sorry, We could not find any active ChinesePod subscription.</p>
+                      <p v-if="customerData && !customerData.status" class="text-danger">{{ customerData.message }}</p>
           
                     </div> <!-- card body -->
 
@@ -313,10 +313,14 @@
         console.log("checking", this.customerEmail);
         if (this.customerEmail) {
 
-          let customerInfo = await fetch('https://chinesepod.com/personal/api/v1/checkEmail/'+this.customerEmail)
+          let customerInfo = await fetch('/personal/api/v1/checkEmail/'+this.customerEmail)
           .then(response => response.json());
 
           this.customerData = customerInfo
+
+          if ( this.customerData && this.customerData.data && !this.customerData.data.card ) {
+            this.otherCard = true
+          }
 
           console.log(this.customerData);
 

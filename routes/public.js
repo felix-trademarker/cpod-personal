@@ -35,6 +35,14 @@ router.get([
     '/personal/api/v1/checkEmail/:email'
 ],apiController.checkEmail);
 
+router.get([
+    '/personal/api/v1/encode/:email'
+],apiController.encodeEmail);
+
+router.get([
+    '/personal/api/v1/decode/:email'
+],apiController.decodeEmail);
+
 
 
 module.exports = router;

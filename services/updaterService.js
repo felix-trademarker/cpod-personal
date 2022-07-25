@@ -10,7 +10,7 @@ exports.createEmailCode = async function() {
   // let users = await rpoUsers.get()
 
   // Define the string
-  var string = 'mg@moas.com';
+  var string = 't-royjones@hotmail.com';
 
   // Create Base64 Object
   

@@ -17,8 +17,8 @@ exports.makeid = function(length) {
     return result;
 }
 
-exports.getEncodedEmail = function(email) {
-    return code ? Base64.encode(email) : code
+exports.getEncodedEmail = function(code) {
+    return code ? Base64.encode(code) : code
 }
 
 exports.getEncodedDecoded = function(code) {
