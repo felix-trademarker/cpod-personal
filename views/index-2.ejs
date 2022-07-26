@@ -113,8 +113,8 @@
                           
                           <div class="">
                             <input type="text" id="email" name="email" v-model.lazy="customerEmail" @change="checkEmail" class="form-control ccInput" placeholder="Email Address">
-                            <input type="hidden" name="sourceCard" v-model="customerData.data.sourceCard">
-                            <input type="hidden" name="customerId" v-model="customerData.data.id">
+                            <input v-if="customerData && customerData.data" type="hidden" name="sourceCard" v-model="customerData.data.sourceCard">
+                            <input v-if="customerData && customerData.data" type="hidden" name="customerId" v-model="customerData.data.id">
                           </div>
                         </div>
           
@@ -152,7 +152,7 @@
           
                                 <div class="col-md-5">
                                   <div class="form-group">
-                                    <input type="date" name="date" min="2022-07-22" max="2030-12-31" class="form-control ccInput" v-model="schedules[ndx].day">
+                                    <input type="date" name="date" min="<%= moment().format('YYYY-MM-DD') %>" max="<%= moment().add('years','1').format('YYYY-MM-DD') %>" class="form-control ccInput" v-model="schedules[ndx].day">
                                   </div>
                                 </div>
           
@@ -346,6 +346,7 @@
       },
 
       addSchedule : function() {
+        if(this.schedules.length < 10) 
         this.schedules.push({
           day: '',
           time: ''
@@ -353,6 +354,7 @@
       },
 
       removeSchedule : function(ndx) {
+        if(this.schedules.length > 1) 
         this.schedules.splice(ndx,1)
       },
 
