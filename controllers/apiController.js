@@ -10,7 +10,8 @@ exports.checkEmail = async function(req, res, next) {
         query: 'email:"'+req.params.email+'"',
     });
 
-    console.log(customers.data)
+    let data = customers.data[customers.data.length - 1]
+
     if (customers && customers.data.length <= 0) {
         res.json({
             status:false,
@@ -18,33 +19,49 @@ exports.checkEmail = async function(req, res, next) {
         });
     } else {
 
-        let customerId = customers.data[customers.data.length - 1].id
-        // let customerSource = customers.data[customers.data.length - 1].default_source
-        console.log(customers.data[customers.data.length - 1]);
+        let customerId = data.id
 
         const cards = await stripe.customers.listSources(
             customerId,
             {object: 'card', limit: 1}
         );
 
-        if (cards && cards.length > 0) {
-            data.card = cards[0]
+        if (data.default_source) {
+            data.sourceCard = data.default_source
         }
 
-        console.log(cards);
+        if (cards && cards.data.length > 0) {
+            // console.log(cards.data.length);
+            data.card = cards.data[(cards.data.length-1)]
+            data.sourceCard = data.card.id
+        } else {
+            const paymentMethods = await stripe.paymentMethods.list({
+                customer: customerId,
+                type: 'card',
+            });
 
-        let data = customers.data[customers.data.length - 1]
+            console.log(paymentMethods);
 
-        // if (customerSource) {
-        //     const cards = await stripe.customers.listSources(
-        //         customerId,
-        //         {object: 'card', limit: 1}
-        //     );
-        //     data.card = card
-        // }
-        
-        
+            if ( paymentMethods.data && paymentMethods.data.length > 0 ) {
+                data.sourceCard = paymentMethods.data[( paymentMethods.data.length-1 )].id
+                data.card = paymentMethods.data[( paymentMethods.data.length-1 )].card
+            }
+        }
 
+        // const paymentIntent = await stripe.paymentIntents.create({
+        //     amount: 100,
+        //     currency: 'usd',
+        //     payment_method_types: ['card'],
+        //     customer: customerId,
+        //     description: "online 10 classes"
+        // });
+
+        // const paymentIntentConfirm = await stripe.paymentIntents.confirm(
+        //     paymentIntent.id,
+        //     {payment_method: data.default_source}
+        // );
+
+        // console.log(data);
         res.json({
             status:true,
             message:"Customer Exists!",

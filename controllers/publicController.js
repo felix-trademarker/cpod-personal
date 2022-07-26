@@ -56,7 +56,7 @@ exports.index = async function(req, res, next) {
         clientTimezone = 2
     }
 
-    // console.log(geo);
+    
 
     res.render('index-2', {
         layout: 'layout/public-layout-2', 
@@ -148,6 +148,10 @@ exports.placeorder = async function(req, res, next) {
     var rpoOrders = new Model("orders")
     var rpoUsers = new Model("users")
 
+
+    // console.log(req.body)
+    // return;
+
     // create order ID
     let flag=true
     let orderNo = ""
@@ -176,24 +180,40 @@ exports.placeorder = async function(req, res, next) {
         }
 
         let customerSource = ''
+        let customerId = req.body.customerId
         if ( req.body.otherCard && req.body.stripeToken){
             customerSource = req.body.stripeToken
         } else {
-            customerSource = customers.data[0].default_source
+            customerSource = req.body.sourceCard
         }
     
         let description = "Online 10 Classes Promo Order# " + orderNo
         
-        const charge = await stripe.charges.create({
-            amount: (299 * 100),
-            currency: 'USD',
-            description: description,
-            source: customerSource,
-            receipt_email: req.body.email,
-            customer: customers.data[0].id
-        });
+        // const charge = await stripe.charges.create({
+        //     amount: (299 * 100),
+        //     currency: 'USD',
+        //     description: description,
+        //     source: customerSource,
+        //     receipt_email: req.body.email,
+        //     customer: customers.data[0].id
+        // });
 
-        if ( charge && charge.paid ) {
+        const paymentIntent = await stripe.paymentIntents.create({
+            amount: (299 * 100),
+            currency: 'usd',
+            payment_method_types: ['card'],
+            customer: customerId,
+            description: description
+        });
+        
+        const paymentIntentConfirm = await stripe.paymentIntents.confirm(
+            paymentIntent.id,
+            {payment_method: customerSource}
+        );
+
+        console.log(paymentIntentConfirm);
+
+        if ( paymentIntentConfirm ) {
             //  send email notification
             // save record to mongo158
 
@@ -213,7 +233,7 @@ exports.placeorder = async function(req, res, next) {
                 customerEmail: req.body.email,
                 timeZone: req.body.selectedZone,
                 schedules: schedules,
-                charge: charge,
+                charge: paymentIntentConfirm,
                 createdAt: res.app.locals.moment().format()
             }
 

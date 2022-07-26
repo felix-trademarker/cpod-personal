@@ -113,6 +113,8 @@
                           
                           <div class="">
                             <input type="text" id="email" name="email" v-model.lazy="customerEmail" @change="checkEmail" class="form-control ccInput" placeholder="Email Address">
+                            <input type="hidden" name="sourceCard" v-model="customerData.data.sourceCard">
+                            <input type="hidden" name="customerId" v-model="customerData.data.id">
                           </div>
                         </div>
           
