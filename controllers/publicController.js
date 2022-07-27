@@ -1,6 +1,7 @@
 const stripe = require("stripe")(process.env.SKEY,{apiVersion: '2020-08-27'});
 let geoip = require('geoip-lite');
 let emailService = require('./../services/emailNotificationService')
+let logService = require('./../services/activityLogService')
 
 var Model = require('./../models/_model')
 
@@ -25,6 +26,8 @@ exports.index = async function(req, res, next) {
     } else {
         decodedEmail = res.app.locals.helpers.getEncodedDecoded(req.params.email)
     }
+
+    logService.logActivity(req, decodedEmail + " Visited personal page")
 
     if (req.params.email) {
         res.cookie('custEmail',decodedEmail, { maxAge: 900000, httpOnly: true });
@@ -148,10 +151,6 @@ exports.placeorder = async function(req, res, next) {
     var rpoOrders = new Model("orders")
     var rpoUsers = new Model("users")
 
-
-    // console.log(req.body)
-    // return;
-
     // create order ID
     let flag=true
     let orderNo = ""
@@ -167,6 +166,8 @@ exports.placeorder = async function(req, res, next) {
         }
 
     }while(flag);
+
+    logService.logActivity(req, req.body.email + " Placed order with order No."+ orderNo)
 
     try {
 
