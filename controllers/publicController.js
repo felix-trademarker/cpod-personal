@@ -264,6 +264,7 @@ exports.thankyou = async function(req, res, next) {
     console.log(orders);
     res.render('thank-you', {
         layout: 'layout/public-layout-2', 
+        // layout: 'layout/testTemplate', 
         title: '',
         description: '',
         keywords: '',

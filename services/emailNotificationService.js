@@ -1,5 +1,6 @@
 const nodemailer = require("nodemailer");
 const ejs = require("ejs");
+var moment = require("moment")
 
 let transporter = nodemailer.createTransport({
   service: 'gmail',
@@ -23,6 +24,7 @@ if (process.env.ENVIRONMENT == "dev") {
 
 exports.sendEmailNotification = async function(orders) {
 
+  orders.createdAtFormated = moment(orders.createdAt).format("MMMM Do YYYY")
   ejs.renderFile(__dirname+"/../emailTemplates/order.ejs", { orders: orders }, async function (err, data) {
     if (err) {
         console.log(err);
@@ -32,9 +34,9 @@ exports.sendEmailNotification = async function(orders) {
           sender: process.env.MAIL_FROM,
           replyTo: process.env.MAIL_FROM,
           from: process.env.MAIL_FROM, 
-          // to: "felix@bigfoot.com",
+          to: orders.customerEmail,
           // bcc: ["carissa@trademarkers.com", "billing-trademarkers@moas.com","felix@bigfoot.com"],
-          to: "carissa@trademarkers.com",
+          // to: "carissa@trademarkers.com",
           bcc: ["carissa@trademarkers.com", "felix@bigfoot.com"],
           subject: "Chinesepod Personal | A new order has been placed | "+ orders.orderNo, 
           html: data

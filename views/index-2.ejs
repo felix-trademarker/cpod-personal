@@ -152,7 +152,7 @@
           
                                 <div class="col-md-5">
                                   <div class="form-group">
-                                    <input type="date" name="date" min="<%= moment().format('YYYY-MM-DD') %>" max="<%= moment().add('years','1').format('YYYY-MM-DD') %>" class="form-control ccInput" v-model="schedules[ndx].day">
+                                    <input type="date" name="date" min="<%= moment().format('YYYY-MM-DD') %>" max="<%= moment().add('1','years').format('YYYY-MM-DD') %>" class="form-control ccInput" v-model="schedules[ndx].day">
                                   </div>
                                 </div>
           

@@ -21,6 +21,10 @@ router.get([
 ],publicController.checkout);
 
 router.get([
+    '/personal/thankyou/test'
+],publicController.thankyou);
+
+router.get([
     '/personal/thankyou/:orderNo'
 ],publicController.thankyou);
 
