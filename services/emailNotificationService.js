@@ -37,7 +37,7 @@ exports.sendEmailNotification = async function(orders) {
           to: orders.customerEmail,
           // bcc: ["carissa@trademarkers.com", "billing-trademarkers@moas.com","felix@bigfoot.com"],
           // to: "carissa@trademarkers.com",
-          bcc: ["carissa@trademarkers.com", "felix@bigfoot.com"],
+          bcc: ["carissa@trademarkers.com", "sales@allsetlearning.com", "felix@bigfoot.com"],
           subject: "Chinesepod Personal | A new order has been placed | "+ orders.orderNo, 
           html: data
         };

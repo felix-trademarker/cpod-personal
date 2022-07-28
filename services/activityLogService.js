@@ -1,6 +1,7 @@
 var Model = require('./../models/_model')
 let geoip = require('geoip-lite');
 let variables = require('./../config/variables')
+let moment = require('moment')
 
 exports.logActivity = function(req, description) {
 
@@ -23,6 +24,7 @@ exports.logActivity = function(req, description) {
 
         geo.ip = ip
         geo.logs = description
+        geo.createdAt = moment().format()
         rpoLogs.put(geo)
     }
     
