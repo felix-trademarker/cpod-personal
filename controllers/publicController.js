@@ -238,7 +238,7 @@ exports.placeorder = async function(req, res, next) {
                 createdAt: res.app.locals.moment().format()
             }
 
-            rpoOrders.put(orderData)
+            await rpoOrders.put(orderData)
 
             emailService.sendEmailNotification(orderData)
         }
