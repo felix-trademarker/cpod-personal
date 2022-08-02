@@ -2,11 +2,15 @@ const stripe = require("stripe")(process.env.SKEY,{apiVersion: '2020-08-27'});
 let geoip = require('geoip-lite');
 let emailService = require('./../services/emailNotificationService')
 let logService = require('./../services/activityLogService')
+let userService = require('./../services/userService')
 
 var Model = require('./../models/_model')
 
 
+
 exports.index = async function(req, res, next) {
+
+    // console.log('returned data',await userService.getUser('felix@bigfoot.com'));
 
     let ip = req.ip;
     const regexExp = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/gi;
@@ -26,6 +30,8 @@ exports.index = async function(req, res, next) {
     } else {
         decodedEmail = res.app.locals.helpers.getEncodedDecoded(req.params.email)
     }
+
+    await userService.getUser(decodedEmail)
 
     logService.logActivity(req, decodedEmail + " Visited personal page")
 
@@ -149,7 +155,7 @@ exports.checkout = async function(req, res, next) {
 exports.placeorder = async function(req, res, next) {
 
     var rpoOrders = new Model("orders")
-    var rpoUsers = new Model("users")
+    
 
     // create order ID
     let flag=true
@@ -219,7 +225,8 @@ exports.placeorder = async function(req, res, next) {
             // save record to mongo158
 
             // find users 
-            let users = await rpoUsers.findQuery({email: req.body.email})
+            // let users = await rpoUsers.findQuery({email: req.body.email})
+            let users = await userService.getUser(req.body.email)
 
             let schedules = {
                 date : req.body.date,
@@ -230,7 +237,7 @@ exports.placeorder = async function(req, res, next) {
                 orderNo: orderNo,
                 description: 'Online 10 Classes',
                 amount: 299,
-                customer: (users && users.length > 0 ? users[0] : null),
+                customer: users,
                 customerEmail: req.body.email,
                 timeZone: req.body.selectedZone,
                 schedules: schedules,

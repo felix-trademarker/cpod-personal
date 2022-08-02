@@ -30,3 +30,21 @@ exports.checkValidEmail = function(email) {
     return regexExp.test(email)
 }
 
+exports.convertIntToStringLevel = function(level) {
+    switch (level) {
+        case 1:
+          return 'newbie';
+        case 2:
+          return 'elementary';
+        case 6:
+          return 'preInt';
+        case 3:
+          return 'intermediate';
+        case 4:
+          return 'upperInt';
+        case 5:
+          return 'advanced';
+        default:
+          return 'newbie'
+    }
+}
