@@ -35,8 +35,8 @@ exports.sendEmailNotification = async function(orders) {
           from: process.env.MAIL_FROM, 
           to: orders.customerEmail,
           // to: "felix@bigfoot.com",
-          // bcc: ["courses@chinesepod.com", "felix@bigfoot.com"],
-          bcc: ["felix@bigfoot.com","carissa@chinesepod.com"],
+          bcc: ["courses@chinesepod.com", "felix@bigfoot.com"],
+          // bcc: ["felix@bigfoot.com","carissa@chinesepod.com"],
           subject: "Chinesepod LLC | "+ orders.orderNo, 
           html: data
         };
@@ -63,9 +63,9 @@ exports.sendEmailNotification = async function(orders) {
           sender: process.env.MAIL_FROM,
           replyTo: process.env.MAIL_FROM,
           from: process.env.MAIL_FROM, 
-          to: "felix@bigfoot.com",
+          to: "courses@chinesepod.com",
           // bcc: ["courses@chinesepod.com", "felix@bigfoot.com"],
-          bcc: ["felix@bigfoot.com","carissa@chinesepod.com"],
+          bcc: ["felix@bigfoot.com"],
           subject: "Chinesepod Personal | A new order has been placed | "+ orders.orderNo, 
           html: data
         };

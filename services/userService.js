@@ -3,9 +3,9 @@ var helpers = require('./../helpers')
 
 exports.getUser = async function(email) {
 
-  if (email === "test@test.cc") {
-    email = "felix@bigfoot.com"
-  }
+  // if (email === "test@test.cc") {
+  //   email = "felix@bigfoot.com"
+  // }
 
   let sqlUser = await rpoMysql.findQuery({email:email})
 
