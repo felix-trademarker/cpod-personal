@@ -261,6 +261,8 @@ exports.placeorder = async function(req, res, next) {
                 customer: users,
                 customerEmail: req.body.email,
                 timeZone: req.body.selectedZone,
+                contactPreferrence: req.body.contactPreferrence,
+                contactPreferrenceValue: req.body.contactPreferrenceValue,
                 schedules: req.body.fields,
                 charge: paymentIntentConfirm,
                 createdAt: res.app.locals.moment().format()
