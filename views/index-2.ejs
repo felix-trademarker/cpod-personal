@@ -103,6 +103,7 @@
                       <div class="row g-3">
           
                         <div class="form-row">
+                          <p class="levelLabel" v-if="customerData && customerData.status">Current Level: {{ customerData.data.level ? customerData.data.level : 'newbie' }}</p>
                           <p class="lh-1">ChinesePod Live Classes Package</p>
                           <p class="lh-1">10 sessions of one hour each</p>
                         </div>
@@ -347,6 +348,11 @@
 
           // this.errorMessage = this.validateForm
           // this.showError = true;
+
+          if (this.customerData && !this.customerData.status) {
+            this.showError = true;
+            this.errorMessage = this.customerData.message
+          }
 
         }
 
