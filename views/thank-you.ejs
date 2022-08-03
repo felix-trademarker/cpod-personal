@@ -19,15 +19,15 @@
           <td><%= orders.orderNo %></td>
           <td><%= orders.description %> <br>
             
-              <% if( Array.isArray(orders.schedules.date) ) { %>
+              <% if( Array.isArray(orders.schedules) ) { %>
                 Zone: <%= orders.timeZone %>
                 <ul class="list">
-                <% for(let i=0; i < orders.schedules.date.length; i++){  %>
-                  <li><%= orders.schedules.date[i] %> - <%= orders.schedules.time[i] %></li>
+                <% for(let i=0; i < orders.schedules.length; i++){  %>
+                  <li><%= orders.schedules[i].day %> - <%= orders.schedules[i].time %> : <%= orders.schedules[i].optFormatted %></li>
                 <% } %>
                 </ul>
               <% } else { %>
-                Schedule: <%= orders.schedules.date %> - <%= orders.schedules.time %>
+                Schedule: <%= orders.schedules.day %> - <%= orders.schedules.time %> : <%= orders.schedules.optFormatted %>
               <% } %>
             
           </td>

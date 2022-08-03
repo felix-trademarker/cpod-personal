@@ -87,17 +87,17 @@
                         <td><%= orders.description %></td>
                         <td>
                           Zone: <%= orders.timeZone %><br>
-                          <% if( Array.isArray(orders.schedules.date) ) { %>
+                          <% if( Array.isArray(orders.schedules) ) { %>
                             Schedules:
                             <ul class="list">
-                            <% for(let i=0; i < orders.schedules.date.length; i++){  %>
-                              <li><%= orders.schedules.date[i] %> - <%= orders.schedules.time[i] %></li>
+                            <% for(let i=0; i < orders.schedules.length; i++){  %>
+                              <li><%= orders.schedules[i].day %> - <%= orders.schedules[i].time %> : <%= orders.schedules[i].optFormatted %></li>
                             <% } %>
                             </ul>
                           <% } else { %>
                             Schedules:
                             <ul class="list">
-                                <li> <%= orders.schedules.date %> - <%= orders.schedules.time %></li>
+                                <li> <%= orders.schedules.day %> - <%= orders.schedules.time %> : <%= orders.schedules.optFormatted %></li>
                             </ul>
                           <% } %>
                         </td>

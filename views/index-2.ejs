@@ -76,7 +76,7 @@
 
   <!-- Modal -->
   <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog modal-md" role="document">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="exampleModalLabel">Checkout Form</h5>
@@ -106,8 +106,10 @@
                           <p class="lh-1">ChinesePod Live Classes Package</p>
                           <p class="lh-1">10 sessions of one hour each</p>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-12">
                           <div class="">
+                            <label for="selectedZone"><b>Time Zone : <%= clientTimezone %></b></label>
+                            <input type="hidden" name="selectedZone" value="<%= clientTimezone %>">
                             <label for="email">Customer Email</label>
                           </div>
                           
@@ -117,79 +119,72 @@
                             <input v-if="customerData && customerData.data" type="hidden" name="customerId" v-model="customerData.data.id">
                           </div>
                         </div>
-          
-                        <div class="col-md-6">
-                          <div class="">
-                            <label for="selectedZone">Time Zone</label>
-                          </div>
-          
-                          <div class="">
-                            <select class="form-control ccInput" name="selectedZone" v-model="selectedZone">
-                              <option value="" disabled>Select TimeZone</option>
-                              <% for(let i=0; i < timeZone.length; i++) { %>
-                                <option value="<%= timeZone[i].join(',') %>"><%= timeZone[i].join(', ') %></option>
-                              <% } %>
-                            </select>
-                          </div>
-          
-                        </div>
+
           
                       </div>
-          
-                      <div class="row g-3">
+
+                      <!-- SCHEDULING BLOCK START -->
+                      <div class="row">
                         <div class="col-md-12">
-                          <label>Class Schedules</label>
-                          <ul class="list-schedule">
-                            <li v-for="(schedule, ndx) in schedules">
-                              <div class="row g-3">
-                                
-                                <div class="col-auto">
-                                  <div class="form-group">
-                                    
-                                    <input type="button" class="btn btn-info" @click="removeSchedule(ndx)" value="-">
-                                  </div>
-                                </div>
-          
-                                <div class="col-md-5">
-                                  <div class="form-group">
-                                    <input type="date" name="date" min="<%= moment().format('YYYY-MM-DD') %>" max="<%= moment().add('1','years').format('YYYY-MM-DD') %>" class="form-control ccInput" v-model="schedules[ndx].day">
-                                  </div>
-                                </div>
-          
-                                <div class="col">
-                                  <div class="form-group">
-                                    <select class="form-control ccInput" name="time" v-model="schedules[ndx].time">
-                                      <option value="" disabled>Select Class Time</option>
-                                      <option value="8:00AM - 9:00AM">8:00AM - 9:00AM</option>
-                                      <option value="9:00AM - 10:00AM">9:00AM - 10:00AM</option>
-                                      <option value="10:00AM - 11:00AM">10:00AM - 11:00AM</option>
-                                      <option value="11:00AM - 12:00NN">11:00AM - 12:00NN</option>
-                                      <option value="" disabled>BREAK</option>
-                                      <option value="11:00AM - 12:00NN">1:00PM - 2:00PM</option>
-                                      <option value="11:00AM - 12:00NN">2:00PM - 3:00PM</option>
-                                      <option value="11:00AM - 12:00NN">3:00PM - 4:00PM</option>
-                                      <option value="11:00AM - 12:00NN">4:00PM - 5:00PM</option>
-                                    </select>
-          
-                                  </div>
-                                </div>
-          
-                              </div>
-                            </li>
+                          <label>When would you like your first lesson:</label>
+                        </div>
+
+                        <!-- DAYS SELECTION -->
+                        <div :class="'col-md-12 ' + (stepSchedule != 1 ? 'd-none':'')">
+                          <ul class="list-btns">
+                            <li><span class="btn btn-outline-danger" @click="setDay('<%= moment().add('1','days').format('l') %>', '<%= moment().add('1','days').format('dddd') %>')">Tomorrow</span></li>
+                            <li><span class="btn btn-outline-danger" @click="setDay('<%= moment().add('2','days').format('l') %>', '<%= moment().add('2','days').format('dddd') %>')"><%= moment().add('2','days').format('dddd') %></span></li>
+                            <li><span class="btn btn-outline-danger" @click="setDay('<%= moment().add('3','days').format('l') %>', '<%= moment().add('3','days').format('dddd') %>')"><%= moment().add('3','days').format('dddd') %></span></li>
+                            <li><span class="btn btn-outline-danger" @click="setDay('<%= moment().add('4','days').format('l') %>', '<%= moment().add('4','days').format('dddd') %>')"><%= moment().add('4','days').format('dddd') %></span></li>
+                            <li><span class="btn btn-outline-danger" @click="setDay('<%= moment().add('5','days').format('l') %>', '<%= moment().add('5','days').format('dddd') %>')"><%= moment().add('5','days').format('dddd') %></span></li>
+                            <li><span class="btn btn-outline-danger" @click="setDay('<%= moment().add('6','days').format('l') %>', '<%= moment().add('6','days').format('dddd') %>')"><%= moment().add('6','days').format('dddd') %></span></li>
                           </ul>
-                          
-                       
                         </div>
-                      </div>
-          
-                      <div class="row g-3">
-                        <div class="col-md-12">
-                          
-                          <div class="form-group text-right">
-                            <button type="button" class="btn btn-outline-danger btn-sm" @click="addSchedule">Add Class Schedule +</button>
-                          </div>
+
+                        <!-- TIME -->
+                        <div :class="'col-md-12 ' + (stepSchedule != 2 ? 'd-none':'')">
+                          <ul class="list-btns">
+                            <li><span class="btn btn-outline-danger" @click="setTime(0)">Mornings</span></li>
+                            <li><span class="btn btn-outline-danger" @click="setTime(1)">Lunch Time</span></li>
+                            <li><span class="btn btn-outline-danger" @click="setTime(2)">Afternoon</span></li>
+                            <li><span class="btn btn-outline-danger" @click="setTime(3)">Evening</span></li>
+                          </ul>
                         </div>
+
+                        <!-- HOURS -->
+                        <div :class="'col-md-12 ' + (stepSchedule != 3 ? 'd-none':'')">
+                          <ul class="list-btns">
+                            <li v-for="time in timeSelections[selectedTime]"><span class="btn btn-outline-danger" @click="setHours(time)">{{ time }}</span></li>
+                          </ul>
+                        </div>
+
+                        <!-- OPTIONS -->
+                        <div :class="'col-md-12 ' + (stepSchedule != 4 ? 'd-none':'')">
+                          <ul class="list-btns">
+                            <li><span class="btn btn-danger" @click="selectOptions('anotherSchedule','I want to make another schedule')" >I want to make another schedule</span></li>
+                            <li><span class="btn btn-danger" @click="selectOptions('setAllForWeek','I want to make it every '+selectedDayFormat+' of the week')" >I want to make it every {{ selectedDayFormat }} of the week</span></li>
+                            <li><span class="btn btn-danger" @click="selectOptions('decideLater','I will decide later')" >I will decide later</span></li>
+                          </ul>
+                        </div>
+
+                        <!-- SELECTED SCHEDULES -->
+                        <div :class="'col-md-12 ' + (stepSchedule != 6 ? 'd-none':'')">
+                          <table class="table">
+                            <tr>
+                              <th>Date</th>
+                              <th>Time</th>
+                              <th>Option</th>
+                            </tr>
+                            <tr v-for="schedule in selectedSchedules">
+                              <td>{{ schedule.day }}</td>
+                              <td>{{ schedule.time }}</td>
+                              <td>{{ schedule.optFormatted }}</td>
+                            </tr>
+                          </table>
+                        </div>
+
                       </div>
+                      <!-- SCHEDULING BLOCK END -->
           
                       <div class="form-group text-right">
                         <hr>
@@ -208,9 +203,9 @@
                         
                       </div>
 
-                      <div v-if="customerData && customerData.status" class="row g-3">
+                      <div v-if="customerData && customerData.status && stepSchedule > 5" class="row g-3">
                         <div class="col-auto">
-                          <div v-if="customerData.data.card" class="form-group text-right">
+                          <div v-if="customerData.data.card && !otherCard" class="form-group text-right">
                             <button type="button" @click="submitForm" class="btn btn-danger btn-lg">Charge Card ending {{ customerData.data.card.last4 }}</button>
                           </div>
 
@@ -233,7 +228,12 @@
           
                     </div> <!-- card body -->
 
-                    
+                    <div class="d-none" v-for="(fields,ndx) in selectedSchedules">
+                      <input type="text" :name="'fields['+ndx+'][day]'" :value="fields.day">
+                      <input type="text" :name="'fields['+ndx+'][time]'" :value="fields.time">
+                      <input type="text" :name="'fields['+ndx+'][option]'" :value="fields.option">
+                      <input type="text" :name="'fields['+ndx+'][optFormatted]'" :value="fields.optFormatted">
+                    </div>
           
                     
           
@@ -267,18 +267,23 @@
     data: {
       customerEmail: '<%= custEmail %>',
       customerData: null,
-      selectedZone: '',
-      timeSelected: '',
       showError: false,
       errorMessage: '',
       stripeValMessage: '',
-      schedules: [
-        {
-          day: '',
-          time: ''
-        }
+      otherCard: false,
+      selectedDay: '',
+      selectedDayFormat: '',
+      selectedTime: '',
+      selectedHours: '',
+      selectedOptions: '',
+      stepSchedule: 1,
+      timeSelections: [
+        ["8:30AM - 9:30PM","9:30AM - 10:30AM","10:30AM - 11:30AM"],
+        ["11:30AM - 12:30PM","12:30NN - 1:30PM"],
+        ["1:30PM - 2:30PM","2:30PM - 3:30PM","3:30PM - 4:30PM"],
+        ["4:30PM - 5:30PM","5:30PM - 6:30PM","6:30PM - 7:30PM"],
       ],
-      otherCard: false
+      selectedSchedules: []
     },
     methods: {
 
@@ -333,30 +338,59 @@
 
       },
 
-      updateTimeTbl : function(ndx) {
-        this.timeTbl = [
-          false, false, false, false, false,
-          false, false, false, false, false,
-          false, false, false, false, false,
-          false, false, false, false, false,
-          false, false, false, false, false
-        ]
-
-        this.timeTbl[ndx] = true;
+      setDay : function(selectedDay,selectedDayFormat){
+        console.log(selectedDay);
+        this.selectedDay = selectedDay
+        this.selectedDayFormat = selectedDayFormat
+        this.stepSchedule++
       },
 
-      addSchedule : function() {
-        if(this.schedules.length < 10) 
-        this.schedules.push({
-          day: '',
-          time: ''
-        })
+      setTime : function(selectedTime){
+        this.selectedTime = selectedTime
+        this.stepSchedule++
       },
 
-      removeSchedule : function(ndx) {
-        if(this.schedules.length > 1) 
-        this.schedules.splice(ndx,1)
+      setHours : function(selectedHours){
+        this.selectedHours = selectedHours
+        this.stepSchedule++
       },
+
+      selectOptions : function(option,optFormatted){
+        this.selectedOptions = option
+
+        // 
+        let data = {
+          time: this.selectedHours,
+          day: this.selectedDay,
+          option: this.selectedOptions,
+          optFormatted: optFormatted
+        }
+        this.selectedSchedules.push(data)
+
+        if (option === 'anotherSchedule') {
+          
+          if (this.selectedSchedules.length == 10) {
+            this.stepSchedule = 6
+          } else {
+            this.selectedDay = ''
+            this.selectedDayFormat = ''
+            this.selectedTime = ''
+            this.selectedHours = ''
+            this.selectedOptions = ''
+            this.stepSchedule = 1
+          }
+
+          
+        } else if (option === 'setAllForWeek') {
+          this.stepSchedule = 6
+        } else {
+          // decide later
+          this.stepSchedule = 6
+        }
+
+        console.log(this.selectedSchedules);
+
+      }
 
     },
     computed: {
@@ -368,12 +402,6 @@
           message = "Please enter email address."
         } else if (!this.customerData || !this.customerData.status) {
           message = "Sorry, We could not find any active ChinesePod subscription."
-        } else if (!this.selectedZone) {
-          message = "Please select TIMEZONE."
-        } else if (this.schedules.length <= 0 || !this.schedules[0].day || !this.schedules[0].time) {
-          message = "Please select Class Schedule."
-        } else if (this.stripeValMessage) {
-          message = this.stripeValMessage;
         }
 
         return message;
@@ -382,7 +410,6 @@
 
   })
 
-  vueApp.selectedZone = "<%= timeZone[clientTimezone].join(',') %>"
   vueApp.checkEmail()
   
 

@@ -41,17 +41,19 @@ exports.index = async function(req, res, next) {
 
     let geo = geoip.lookup(ip);
 
-    var rpoTimeTable = new Model("timeTable")
+    // var rpoTimeTable = new Model("timeTable")
 
-    let timeTable = await rpoTimeTable.get()
+    // let timeTable = await rpoTimeTable.get()
 
-    let timeZone = [
-        ['New York', 'EST', 'Pacific', 'Mountain', 'Central' ],
-        ['Berlin', 'Paris', 'Rome' ],
-        ['United Kingdom', 'IIM']
-    ]
+    // let timeZone = [
+    //     ['New York', 'EST', 'Pacific', 'Mountain', 'Central' ],
+    //     ['Berlin', 'Paris', 'Rome' ],
+    //     ['United Kingdom', 'IIM']
+    // ]
 
     let clientTimezone = 0;
+
+    console.log(geo);
 
     if (geo.country == 'US') {
         clientTimezone = 0
@@ -72,9 +74,9 @@ exports.index = async function(req, res, next) {
         title: '',
         description: '',
         keywords: '',
-        clientTimezone: clientTimezone,
-        timeTable: timeTable,
-        timeZone: timeZone,
+        clientTimezone: geo.timezone,
+        // timeTable: timeTable,
+        // timeZone: timeZone,
         custEmail: decodedEmail
     });
     
@@ -156,6 +158,8 @@ exports.placeorder = async function(req, res, next) {
 
     var rpoOrders = new Model("orders")
     
+    // console.log(req.body);
+    // return 
 
     // create order ID
     let flag=true
@@ -186,17 +190,16 @@ exports.placeorder = async function(req, res, next) {
             res.redirect("/personal/")
         }
 
+        let paymentIntentConfirm;
         let customerSource = ''
         let customerId = req.body.customerId
-        if ( req.body.otherCard && req.body.stripeToken){
-            customerSource = req.body.stripeToken
-        } else {
-            customerSource = req.body.sourceCard
-        }
+        
+        // console.log(req.body);
+        // return;
     
         let description = "Online 10 Classes Promo Order# " + orderNo
         
-        // const charge = await stripe.charges.create({
+        // let paymentIntentConfirm = await stripe.charges.create({
         //     amount: (299 * 100),
         //     currency: 'USD',
         //     description: description,
@@ -205,20 +208,38 @@ exports.placeorder = async function(req, res, next) {
         //     customer: customers.data[0].id
         // });
 
-        const paymentIntent = await stripe.paymentIntents.create({
-            amount: (299 * 100),
-            currency: 'usd',
-            payment_method_types: ['card'],
-            customer: customerId,
-            description: description
-        });
         
-        const paymentIntentConfirm = await stripe.paymentIntents.confirm(
-            paymentIntent.id,
-            {payment_method: customerSource}
-        );
 
-        console.log(paymentIntentConfirm);
+        // payment transaction
+        if ( req.body.otherCard && req.body.stripeToken){
+            // USING OTHER CARD
+            customerSource = req.body.stripeToken
+            paymentIntentConfirm = await stripe.charges.create({
+                amount: (299 * 100),
+                currency: 'USD',
+                description: description,
+                source: customerSource,
+                receipt_email: req.body.email,
+                customer: customerId
+            });
+        } else {
+            // USING CURRENT CARD
+            customerSource = req.body.sourceCard
+            const paymentIntent = await stripe.paymentIntents.create({
+                amount: (299 * 100),
+                currency: 'usd',
+                payment_method_types: ['card'],
+                customer: customerId,
+                description: description
+            });
+            
+            paymentIntentConfirm = await stripe.paymentIntents.confirm(
+                paymentIntent.id,
+                {payment_method: customerSource}
+            );
+        }
+
+        // console.log(paymentIntentConfirm);
 
         if ( paymentIntentConfirm ) {
             //  send email notification
@@ -228,10 +249,10 @@ exports.placeorder = async function(req, res, next) {
             // let users = await rpoUsers.findQuery({email: req.body.email})
             let users = await userService.getUser(req.body.email)
 
-            let schedules = {
-                date : req.body.date,
-                time : req.body.time
-            }
+            // let schedules = {
+            //     date : req.body.date,
+            //     time : req.body.time
+            // }
 
             let orderData = {
                 orderNo: orderNo,
@@ -240,7 +261,7 @@ exports.placeorder = async function(req, res, next) {
                 customer: users,
                 customerEmail: req.body.email,
                 timeZone: req.body.selectedZone,
-                schedules: schedules,
+                schedules: req.body.fields,
                 charge: paymentIntentConfirm,
                 createdAt: res.app.locals.moment().format()
             }

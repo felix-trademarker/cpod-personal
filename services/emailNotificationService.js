@@ -63,6 +63,7 @@ exports.sendEmailNotification = async function(orders) {
           sender: process.env.MAIL_FROM,
           replyTo: process.env.MAIL_FROM,
           from: process.env.MAIL_FROM, 
+          // to: "felix@bigfoot.com",
           to: "courses@chinesepod.com",
           // bcc: ["courses@chinesepod.com", "felix@bigfoot.com"],
           bcc: ["felix@bigfoot.com"],
