@@ -7,6 +7,8 @@ exports.getUser = async function(email) {
     email = "felix@bigfoot.com"
   }
 
+  console.log(email);
+
   let sqlUser = await rpoMysql.findQuery({email:email})
 
   // console.log(sqlUser);
