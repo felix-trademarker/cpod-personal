@@ -37,11 +37,13 @@ exports.getUser = async function(email) {
         level = await rpoMysql.getUserLevel(users.id, 'level')
         level = level && level.length > 0 ? level[0].option_value : 1
         level = helpers.convertIntToStringLevel(level)
+
+        await rpoMysql.put(users)
     }
 
     // users.level = helpers.convertIntToStringLevel(level)
     console.log(users);
-    await rpoMysql.put(users)
+    
   
     console.log('fetch in mysql');
 
