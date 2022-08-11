@@ -14,6 +14,15 @@ exports.getUser = async function(email) {
   // console.log(sqlUser);
   if (sqlUser && sqlUser.length > 0) {
     console.log("fetch in mongo");
+
+    // FETCHED LEVEL 
+    // WE CAN ADD MORE USER OPTIONS LATER
+    level = await rpoMysql.getUserLevel(sqlUser[0].id, 'level')
+    level = level && level.length > 0 ? level[0].option_value : 1
+    level = helpers.convertIntToStringLevel(level)
+
+    sqlUser[0].level = level
+
     return sqlUser[0]
 
   } else {
@@ -31,7 +40,7 @@ exports.getUser = async function(email) {
     }
 
     // users.level = helpers.convertIntToStringLevel(level)
-  
+    console.log(users);
     await rpoMysql.put(users)
   
     console.log('fetch in mysql');
