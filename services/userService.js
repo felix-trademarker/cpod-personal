@@ -20,7 +20,7 @@ exports.getUser = async function(email) {
     level = await rpoMysql.getUserLevel(sqlUser[0].id, 'level')
     level = level && level.length > 0 ? level[0].option_value : 1
     level = helpers.convertIntToStringLevel(level)
-
+    console.log(level);
     sqlUser[0].level = level
 
     return sqlUser[0]
