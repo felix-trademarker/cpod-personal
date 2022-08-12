@@ -101,9 +101,13 @@
                       </div>
                                       
                       <div class="row g-3">
-          
+                        
                         <div class="form-row">
-                          <p class="levelLabel" v-if="customerData && customerData.status">Current Level: {{ customerData.data.level ? customerData.data.level : 'newbie' }}<br><a href="https://www.chinesepod.com/settings" target="_blank">Update Level</a></p>
+                          <p class="levelLabel" v-if="customerData && customerData.status">Current Level: {{ customerData.data.level ? customerData.data.level : 'newbie' }}
+                            <br>
+                            <a v-if="vuex && vuex.token" href="https://www.chinesepod.com/settings" target="_blank">Update Level</a>
+                            <a v-if="!vuex || !vuex.token" href="/personal/login/<%= encodedEmail %>" >Update Level</a>
+                          </p>
                           <p class="lh-1">ChinesePod Live Classes Package</p>
                           <p class="lh-1">10 sessions of one hour each</p>
                         </div>
@@ -278,6 +282,7 @@
   var vueApp = new Vue({
     el: "#checkout-content",
     data: {
+      vuex: JSON.parse(window.localStorage.getItem('vuex')),
       customerEmail: '<%= custEmail %>',
       customerData: null,
       showError: false,
@@ -430,6 +435,10 @@
   })
 
   vueApp.checkEmail()
+
+  if (vueApp.vuex) {
+    console.log(vueApp.vuex);
+  }
   
 
   // Create an instance of Elements

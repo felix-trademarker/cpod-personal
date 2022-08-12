@@ -21,6 +21,10 @@ router.get([
 ],publicController.checkout);
 
 router.get([
+    '/personal/login/:email'
+],publicController.login);
+
+router.get([
     '/personal/thankyou/test'
 ],publicController.thankyou);
 

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login | ChinesePod</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <!--STYLES-->
+    <link rel="stylesheet" href="https://www.chinesepod.com/min/production.min.css">
+    <!--STYLES END-->
+</head>
+<body>
+
+  <div id="page-wrap">
+    <header id="page-header"
+            class="navbar navbar-expand-sm navbar-light bg-light flex-column flex-md-row justify-content-between">
+        <a class="navbar-brand mr-0" href="/"><img class="logo" alt="ChinesePod Logo" src="https://www.chinesepod.com/images/brand/brand.svg"
+                                                  width="160px"/></a>
+        <div class="navbar-nav flex-row">
+            <a class="nav-item nav-link ml-2 ml-md-0 mr-2 mr-md-0" href="/contact">Help</a>
+            <!-- LOGGED-IN NAVIGATION -->
+            
+                <!-- LOGGED-OUT NAVIGATION -->
+                <a class="nav-item nav-link ml-2 ml-md-0 mr-2 mr-md-0" href="/corporate"><span
+                            class="d-none d-md-inline">For </span>Companies</a>
+                <a class="nav-item nav-link ml-2 ml-md-0 mr-2 mr-md-0" href="/academic-offers"><span
+                            class="d-none d-md-inline">For </span>Schools</a>
+                <a class="nav-item nav-link ml-2 ml-md-0 mr-2" href="/login">Log in</a>
+                <div class="form-inline ml-2">
+
+                    <a class="btn btn-outline-success" href="/signup">Sign Up</a>
+                </div>
+            
+        </div>
+    </header>
+      
+    <div id="login">
+    <div class="container">
+      <h1 class="text-white headline font-weight-bold text-center py-3">Log in</h1>
+      <div class="login-form-container card p-5">
+
+          <div class="form-group">
+            <input type="email" v-model="cEmail" class="form-control" placeholder="Email address" autocomplete="email" disabled>
+          
+          </div>
+          <div class="form-group">
+            <input type="password" v-model="cPass" class="form-control" placeholder="Password" autocomplete="current-password">
+            
+          </div>
+
+
+          <div class="form-group" v-if="cEmail && cPass">
+            <button @click="login" class="btn-primary btn-lg btn-block">Sign in</button>
+          </div>
+
+          <div class="form-group" v-if="!cEmail || !cPass">
+            <button class="btn-primary btn-lg btn-block" disabled>Sign in</button>
+          </div>
+
+
+      </div>
+    </div>
+  </div>
+
+  <footer id="page-footer" style="display: none"
+          class="footer navbar navbar-light justify-content-between flex-row-reverse">
+      <div class="col-xs-12 col-md-3 text-center">
+          <ul class="list-inline social">
+              <li class="list-inline-item"><a class="list-inline-item social-icon"
+                                              href="https://www.facebook.com/ChinesePod" target="_blank">
+                      <img src="/images/social/facebook-red.svg">
+                      <img class="hover" src="/images/social/facebook-white.svg">
+                  </a>
+              </li>
+              <li class="list-inline-item"><a class="list-inline-item social-icon"
+                                              href="https://twitter.com/chinesepod" target="_blank">
+                      <img src="/images/social/twitter-red.svg">
+                      <img class="hover" src="/images/social/twitter-white.svg">
+                  </a>
+              </li>
+              <li class="list-inline-item"><a class="list-inline-item social-icon"
+                                              href="http://instagram.com/chinesepod/" target="_blank">
+                      <img src="/images/social/instagram-red.svg">
+                      <img class="hover" src="/images/social/instagram-white.svg">
+                  </a>
+              </li>
+              <li class="list-inline-item"><a class="list-inline-item social-icon"
+                                              href="https://www.youtube.com/user/ChinesePodTV" target="_blank">
+                      <img src="/images/social/youtube-red.svg">
+                      <img class="hover" src="/images/social/youtube-white.svg">
+                  </a>
+              </li>
+          </ul>
+      </div>
+      <div class="col-xs-12 col-md-6 text-center">
+          <small class="copy">Copyright &copy; 2022 ChinesePod LLC</small>
+          <div class="list-inline text-center">
+              <small class="list-inline-item"><a class="nav-link text-danger" href="/contact">Contact</a></small>
+              <small class="list-inline-item"><a class="nav-link text-danger" href="/pricing">Pricing</a></small>
+              <!--        <small class="list-inline-item"><a class="nav-link text-danger" href="/jobs">Careers</a></small>-->
+              <small class="list-inline-item"><a class="nav-link text-danger" href="/start-learning-mandarin">About
+                      Us</a></small>
+              <!--        <small class="list-inline-item"><a class="nav-link text-danger" href="/affiliate">Affiliate</a></small>-->
+              <!--        <small class="list-inline-item"><a class="nav-link text-danger" href="/resources">Resources</a></small>-->
+              <small class="list-inline-item"><a class="nav-link text-danger" href="/privacy">Privacy</a></small>
+              <small class="list-inline-item"><a class="nav-link text-danger" href="/terms">Terms</a></small>
+          </div>
+      </div>
+      <div class="col-xs-12 col-md-3 text-center" style="padding-bottom:20px">
+          <div class="col-12 text-center">
+              <a href="https://itunes.apple.com/us/app/chinesepod-podcast/id1185380819?mt=8" target="_blank"
+                  style="margin-bottom:10px;text-decoration:none;">
+                  <img data-src="/img/app-store-icon.svg" class="lazyloaded img-fluid " style="max-height: 60px"
+                        alt="ChinesePod iOS App" src="/img/app-store-icon.svg">
+              </a>
+
+          </div>
+      </div>
+  </footer>
+
+</div>
+
+
+<script src="/personal/js/vue-2.js"></script>
+
+<script>
+
+  var vueApp = new Vue({
+    el: "#login",
+    data: {
+      vuex: JSON.parse(window.localStorage.getItem('vuex')),
+      cEmail: '<%= decodedEmail %>',
+      cPass: ''
+    },
+    methods: {
+
+      postAPIFetch: async function(api, params) {
+
+        let options = {
+            credentials: 'same-origin',
+            headers: {
+                'Accept': 'application/json, text/plain, */*',
+                'Content-Type': 'application/json'
+            },
+            method: "POST",
+            body: JSON.stringify(params)
+        }
+
+        let results = await fetch(api,options)
+
+            .then(res => {
+                return res.statusText;
+            })
+
+        return results;
+
+      },
+
+      login : function() {
+
+        let params = {
+          clientId: 'dashboard',
+          emailAddress: this.cEmail,
+          password: this.cPass,
+          rememberMe: true
+        }
+        let resToken = await this.postAPIFetch('/api/v1/entrance/login', params)
+
+      
+        console.log('customer',resToken)
+      }
+
+
+    },
+    computed: {
+
+    }
+
+  })
+
+
+  function getCookie(cname) {
+    const name = cname + "=";
+    const decodedCookie = decodeURIComponent(document.cookie);
+    const ca = decodedCookie.split(';');
+    for (let i = 0; i < ca.length; i++) {
+      var c = ca[i];
+      while (c.charAt(0) == ' ') {
+        c = c.substring(1);
+      }
+      if (c.indexOf(name) == 0) {
+        return c.substring(name.length, c.length);
+      }
+    }
+    return "";
+  }
+  function setCookie(cname, cvalue, exdays) {
+    const d = new Date();
+    d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+    const expires = "expires=" + d.toUTCString();
+    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+  }
+ 
+</script>
+</body>
+</html>

@@ -67,7 +67,7 @@ exports.index = async function(req, res, next) {
         clientTimezone = 2
     }
 
-    
+    // console.log(res.app.locals.helpers.getEncodedEmail(decodedEmail));
 
     res.render('index-2', {
         layout: 'layout/public-layout-2', 
@@ -77,7 +77,8 @@ exports.index = async function(req, res, next) {
         clientTimezone: geo.timezone,
         // timeTable: timeTable,
         // timeZone: timeZone,
-        custEmail: decodedEmail
+        custEmail: decodedEmail,
+        encodedEmail: res.app.locals.helpers.getEncodedEmail(decodedEmail)
     });
     
   
@@ -300,6 +301,31 @@ exports.thankyou = async function(req, res, next) {
         description: '',
         keywords: '',
         orders: (orders && orders.length > 0 ? orders[0] : null)
+    });
+    
+  
+}
+
+exports.login = async function(req, res, next) {
+
+    let decodedEmail = req.params.email
+
+    let isValidEmail = res.app.locals.helpers.checkValidEmail(req.params.email)
+
+    if (isValidEmail) {
+        console.log("valid email");
+        decodedEmail = req.params.email
+    } else {
+        decodedEmail = res.app.locals.helpers.getEncodedDecoded(req.params.email)
+    }
+
+    res.render('login', {
+        layout: 'layout/public-layout-login', 
+        // layout: 'layout/testTemplate', 
+        title: '',
+        description: '',
+        keywords: '',
+        decodedEmail: decodedEmail
     });
     
   
