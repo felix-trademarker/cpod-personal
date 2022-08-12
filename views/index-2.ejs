@@ -307,6 +307,25 @@
     },
     methods: {
 
+      getAPIFetch: async function(api) {
+
+        let results = await fetch(api,{
+            credentials: 'same-origin',
+            headers: {
+                'Accept': 'application/json, text/plain, */*',
+                'Content-Type': 'application/json'
+            },
+        })
+        .then(resp => resp.json())
+        .then(res => {
+            // console.log("this res", res);
+            return res;
+        })
+
+        return results;
+
+      },
+
       newCard: function() {
         this.otherCard = !this.otherCard
       },
@@ -438,6 +457,9 @@
 
   if (vueApp.vuex) {
     console.log(vueApp.vuex);
+    if (vueApp.customerEmail != vueApp.vuex.userInfo.email) {
+      vueApp.getAPIFetch('https://www.chinesepod.com/api/v1/account/logout')
+    }
   }
   
 
