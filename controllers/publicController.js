@@ -136,6 +136,9 @@ exports.orderForm = async function(req, res, next) {
         clientTimezone = 2
     }
 
+    var rpoTimeZone = new Model("timeZone")
+    let timeZones = await rpoTimeZone.findQuery({timeZoneID: geo.timezone})
+    console.log(timeZones);
     // console.log(res.app.locals.helpers.getEncodedEmail(decodedEmail));
 
     res.render('orderForm', {
@@ -144,7 +147,7 @@ exports.orderForm = async function(req, res, next) {
         description: '',
         keywords: '',
         // clientTimezone: geo.timezone,
-        clientTimezone: timeZone[clientTimezone].join(', '),
+        clientTimezone: timeZones[0].displayName,
         // timeTable: timeTable,
         // timeZone: timeZone,
         custEmail: decodedEmail,
