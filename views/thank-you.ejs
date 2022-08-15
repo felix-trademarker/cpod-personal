@@ -1,62 +1,296 @@
-
-
 <div id="thankYouApp" class="container">
   <div class="row justify-content-center box-bg-container mt-5 mb-5">
     <div class="col-8">
       <h1 class="text-success">Thank you for your order!</h1>
     <% if(orders) { %>
       <p class="mb-3">Your order number is: <strong><%= orders.orderNo %></strong></p>   
-
-      <h3>Order Summary</h3>
-      <table class="table">
-        <tr>
-          <th>Order #</th>
-          <th>Description</th>
-          <th>Quantity</th>
-          <th>Amount</th>
-        </tr>
-        <tr>
-          <td><%= orders.orderNo %></td>
-          <td><%= orders.description %> <br>
-            
-              <% if( Array.isArray(orders.schedules) ) { %>
-                Zone: <%= orders.timeZone %>
-                <ul class="list">
-                <% for(let i=0; i < orders.schedules.length; i++){  %>
-                  <li><%= orders.schedules[i].day %> - <%= orders.schedules[i].time %></li>
-                <% } %>
-                </ul>
-                <p v-if="orders.schedules[orders.schedules.length-1].option != 'anotherSchedule'">Option: <%= orders.schedules[orders.schedules.length-1].optFormatted %></p>
-              <% } else { %>
-                Schedule: <%= orders.schedules.day %> - <%= orders.schedules.time %> : <%= orders.schedules.optFormatted %>
-              <% } %>
-            
-          </td>
-          <td>10 classes</td>
-          <td>$299.00</td>
-        </tr>
-      </table>
       <p>Boost your learning pace with the ChinesePod Online 10 Classes - and get your personalized classes a real native teacher over video chat! Our teachers know the ChinesePod curriculum inside out and can help you practice real live conversations.</p>
-    <% } else { %>
-      <p class="mb-3">Your order number is: <strong>XX-XXXX</strong></p>   
 
-      <h3>Order Summary</h3>
-      <table class="table">
-        <tr>
-          <th>Order #</th>
-          <th>Description</th>
-          <th>Quantity</th>
-          <th>Amount</th>
-        </tr>
-        <tr>
-          <td>XX-XXXX</td>
-          <td>Lorem ipsum dolor sit amet consectetur</td>
-          <td>1</td>
-          <td>$299.00</td>
-        </tr>
-      </table>
-      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Facilis, quisquam perferendis consequuntur doloremque eius quidem, voluptas cum aut nulla cupiditate dolore, sit quos nesciunt deserunt debitis unde et perspiciatis exercitationem.</p>
+      <section id="checkout-content">
+        <div class="container1">
+          <div class="row justify-content-center" style="align-items: flex-end;">
+            <div class="col-md-8">
+      
+
+                  <% if(orders && orders.schedules) { %>
+                  <h2>Order Summary</h2>
+                  <table class="table">
+                    <tr>
+                      <th>Order #</th>
+                      <th>Description</th>
+                      <th>Quantity</th>
+                      <th>Amount</th>
+                    </tr>
+                    <tr>
+                      <td><%= orders.orderNo %></td>
+                      <td><%= orders.description %> <br>
+                        
+                          <% if( Array.isArray(orders.schedules) ) { %>
+                            Zone: <%= orders.timeZone %>
+                            <ul class="list">
+                            <% for(let i=0; i < orders.schedules.length; i++){  %>
+                              <li><%= orders.schedules[i].day %> - <%= orders.schedules[i].time %></li>
+                            <% } %>
+                            </ul>
+                            <% if(orders.schedules[orders.schedules.length-1].option != 'anotherSchedule') { %>
+                              <span>Option: <%= orders.schedules[orders.schedules.length-1].optFormatted %></span>
+                            <% } %>
+                          <% } else { %>
+                            Schedule: <%= orders.schedules.day %> - <%= orders.schedules.time %> : <%= orders.schedules.optFormatted %>
+                          <% } %>
+                        
+                      </td>
+                      <td>10 classes</td>
+                      <td>$299.00</td>
+                    </tr>
+                  </table>
+                  <% } else { %>
+                    <div class="card-body">
+                      <form action="/personal/thankyou-update/<%= orders.orderNo %>" method="post">
+                      <div class="form-row" v-if="showError">
+                        <div class="col-md-12">
+                          <div class="alert alert-danger" role="alert" >
+                            {{ errorMessage }}
+                          </div>
+                        </div>
+                      </div>
+                    <!-- SCHEDULING BLOCK START -->
+                  <div class="row">
+                    <div class="col-md-12 text-center">
+                      <h2>We're almost there!</h2>
+                      <h3>When would you like your {{ selectedSchedules.length > 0 ? 'next' : 'first' }} lesson:</h3>
+                    </div>
+
+                    <!-- DAYS SELECTION -->
+                    <div :class="'col-md-12 ' + (stepSchedule != 1 ? 'd-none':'')">
+                      <ul class="list-btns">
+                        <li><span class="btn btn-outline-danger" @click="setDay('<%= moment().add('1','days').format('l') %>', '<%= moment().add('1','days').format('dddd') %>')">Tomorrow</span></li>
+                        <li><span class="btn btn-outline-danger" @click="setDay('<%= moment().add('2','days').format('l') %>', '<%= moment().add('2','days').format('dddd') %>')"><%= moment().add('2','days').format('dddd') %></span></li>
+                        <li><span class="btn btn-outline-danger" @click="setDay('<%= moment().add('3','days').format('l') %>', '<%= moment().add('3','days').format('dddd') %>')"><%= moment().add('3','days').format('dddd') %></span></li>
+                        <li><span class="btn btn-outline-danger" @click="setDay('<%= moment().add('4','days').format('l') %>', '<%= moment().add('4','days').format('dddd') %>')"><%= moment().add('4','days').format('dddd') %></span></li>
+                        <li><span class="btn btn-outline-danger" @click="setDay('<%= moment().add('5','days').format('l') %>', '<%= moment().add('5','days').format('dddd') %>')"><%= moment().add('5','days').format('dddd') %></span></li>
+                        <li><span class="btn btn-outline-danger" @click="setDay('<%= moment().add('6','days').format('l') %>', '<%= moment().add('6','days').format('dddd') %>')"><%= moment().add('6','days').format('dddd') %></span></li>
+                      </ul>
+                    </div>
+
+                    <!-- TIME -->
+                    <div :class="'col-md-12 ' + (stepSchedule != 2 ? 'd-none':'')">
+                      <ul class="list-btns">
+                        <li><span class="btn btn-outline-danger" @click="setTime(0)">Mornings</span></li>
+                        <li><span class="btn btn-outline-danger" @click="setTime(1)">Lunch Time</span></li>
+                        <li><span class="btn btn-outline-danger" @click="setTime(2)">Afternoon</span></li>
+                        <li><span class="btn btn-outline-danger" @click="setTime(3)">Evening</span></li>
+                      </ul>
+                    </div>
+
+                    <!-- HOURS -->
+                    <div :class="'col-md-12 ' + (stepSchedule != 3 ? 'd-none':'')">
+                      <ul class="list-btns">
+                        <li v-for="time in timeSelections[selectedTime]"><span class="btn btn-outline-danger" @click="setHours(time)">{{ time }}</span></li>
+                      </ul>
+                    </div>
+
+                    <!-- OPTIONS -->
+                    <div :class="'col-md-12 ' + (stepSchedule != 4 ? 'd-none':'')">
+                      <ul class="list-btns">
+                        <li><span class="btn btn-danger" @click="selectOptions('anotherSchedule','I want to make another schedule')" >I want to make another schedule</span></li>
+                        <li><span class="btn btn-danger" @click="selectOptions('setAllForWeek','I want to make it every '+selectedDayFormat+' of the week')" >I want to make it every {{ selectedDayFormat }} of the week</span></li>
+                        <li><span class="btn btn-danger" @click="selectOptions('decideLater','I will decide later')" >I will decide later</span></li>
+                      </ul>
+                    </div>
+
+                    <!-- SELECTED SCHEDULES -->
+                    <div :class="'col-md-12 mt-2 mb-4 ' + (stepSchedule != 6 ? 'd-none':'')">
+                      <table class="table">
+                        <tr>
+                          <th>Date</th>
+                          <th>Time</th>
+                        </tr>
+                        <tr v-for="schedule in selectedSchedules">
+                          <td>{{ schedule.day }}</td>
+                          <td>{{ schedule.time }}</td>
+                        </tr>
+                        <tr v-if="selectedSchedules.length > 0 && selectedOptions != 'anotherSchedule'">
+                          <td colspan="2" >{{ selectedSchedules[selectedSchedules.length-1].optFormatted }}</td>
+                        </tr>
+                      </table>
+                    </div>
+
+                  </div>
+                  <!-- SCHEDULING BLOCK END -->
+
+                  <div class="col-md-12">
+                    <div class="form-group">
+                      <label for="selectedZone"><b>Contact Preferrence</b></label>
+                      <select class="form-control ccInput" name="contactPreferrence" v-model="contactPreferrence">
+                        <option value="" disabled>-Please Select Preferrence-</option>
+                        <option value="Skype">Skype</option>
+                        <option value="WeChat">WeChat</option>
+                      </select>
+                      <input class="form-control ccInput" type="text" name="contactPreferrenceValue" v-model="contactPreferrenceValue" :placeholder="'Please Enter '+contactPreferrence+' ID'">
+                    </div>
+                  </div>
+      
+               
+                  <div class="d-none" v-for="(fields,ndx) in selectedSchedules">
+                    <input type="text" :name="'fields['+ndx+'][day]'" :value="fields.day">
+                    <input type="text" :name="'fields['+ndx+'][time]'" :value="fields.time">
+                    <input type="text" :name="'fields['+ndx+'][option]'" :value="fields.option">
+                    <input type="text" :name="'fields['+ndx+'][optFormatted]'" :value="fields.optFormatted">
+                  </div>
+
+                  <div class="col-md-12">
+                    <div v-if="selectedSchedules && selectedSchedules.length > 0" class="form-group text-right">
+                      <input type="submit" class="btn btn-danger btn-lg" value="Update Order Details">
+                    </div>
+                  </div>
+              
+                  </form>
+                </div> <!-- card body -->
+                  <% } %>
+
+
+                  
+
+                
+      
+                
+      
+              
+          
+            </div>
+      
+          </div>
+
+        </div>
+      
+      </section>
+      
+
     <% } %>
+
     </div>
   </div>
 </div>
+
+<script src="/personal/js/vue-2.js"></script>
+<script>
+  var vueApp = new Vue({
+    el: "#checkout-content",
+    data: {
+      vuex: JSON.parse(window.localStorage.getItem('vuex')),
+
+      customerData: null,
+      showError: false,
+      errorMessage: '',
+      stripeValMessage: '',
+      otherCard: false,
+      selectedDay: '',
+      selectedDayFormat: '',
+      selectedTime: '',
+      selectedHours: '',
+      selectedOptions: '',
+      stepSchedule: 1,
+      timeSelections: [
+        ["8:30AM - 9:30PM","9:30AM - 10:30AM","10:30AM - 11:30AM"],
+        ["11:30AM - 12:30PM","12:30NN - 1:30PM"],
+        ["1:30PM - 2:30PM","2:30PM - 3:30PM","3:30PM - 4:30PM"],
+        ["4:30PM - 5:30PM","5:30PM - 6:30PM","6:30PM - 7:30PM"],
+      ],
+      selectedSchedules: [],
+      contactPreferrence: '',
+      contactPreferrenceValue: ''
+    },
+    methods: {
+
+      getAPIFetch: async function(api) {
+
+        let results = await fetch(api,{
+            credentials: 'same-origin',
+            headers: {
+                'Accept': 'application/json, text/plain, */*',
+                'Content-Type': 'application/json'
+            },
+        })
+        .then(resp => resp.json())
+        .then(res => {
+            // console.log("this res", res);
+            return res;
+        })
+
+        return results;
+
+      },
+
+      setDay : function(selectedDay,selectedDayFormat){
+        console.log(selectedDay);
+        this.selectedDay = selectedDay
+        this.selectedDayFormat = selectedDayFormat
+        this.stepSchedule++
+      },
+
+      setTime : function(selectedTime){
+        this.selectedTime = selectedTime
+        this.stepSchedule++
+      },
+
+      setHours : function(selectedHours){
+        this.selectedHours = selectedHours
+        this.stepSchedule++
+      },
+
+      selectOptions : function(option,optFormatted){
+        this.selectedOptions = option
+
+        // 
+        let data = {
+          time: this.selectedHours,
+          day: this.selectedDay,
+          option: this.selectedOptions,
+          optFormatted: optFormatted
+        }
+        this.selectedSchedules.push(data)
+
+        if (option === 'anotherSchedule') {
+          
+          this.selectedDay = ''
+          this.selectedDayFormat = ''
+          this.selectedTime = ''
+          this.selectedHours = ''
+          this.selectedOptions = ''
+          this.stepSchedule = 1
+
+          
+        } else if (option === 'setAllForWeek') {
+          this.stepSchedule = 6
+        } else {
+          // decide later
+          this.stepSchedule = 6
+        }
+
+        console.log(this.selectedSchedules);
+
+      }
+
+    },
+    computed: {
+
+      validateForm : function() {
+
+        let message = ""
+        if (!this.customerEmail) {
+          message = "Please enter email address."
+        } else if (!this.customerData || !this.customerData.status) {
+          message = "Sorry, We could not find any active ChinesePod subscription."
+        } 
+        // else if (!this.contactPreferrenceValue || !this.contactPreferrence) {
+        //   message = "Please select contact preferremces"
+        // }
+
+        return message;
+      }
+    }
+
+  })
+
+</script>

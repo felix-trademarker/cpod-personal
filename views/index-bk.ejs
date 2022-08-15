@@ -3,7 +3,7 @@
   <div class="col-md-6" style="background: #00000038;padding: 20px;">
     <h1>Introducing: ChinesePod <br>In Person Online 10 Classes</h1>
     <p>Boost your learning pace with the ChinesePod Online 10 Classes - and get your personalized classes a real native teacher over video chat! Our teachers know the ChinesePod curriculum inside out and can help you practice real live conversations.</p>
-    <p class="text-right" style="text-align: right;"><a href="/personal/order-form/<%= encodedEmail %>" style="box-shadow: 0px 0px 5px #2e2e2e;" class="btn btn-danger">ORDER NOW</a></p>
+    <p class="text-right" style="text-align: right;"><span style="box-shadow: 0px 0px 5px #2e2e2e;" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal">ORDER NOW</span></p>
   </div>
   </div>
   </section>
@@ -68,7 +68,7 @@
       <div style="width: 70px;border-top: 5px solid #2a428c;margin-bottom: 6px;"></div>
       <div style="width: 40px;border-top: 5px solid #ffcd00;margin-bottom: 10px;"></div>
       <p>Our package is very simple: 10 classes for only $299.</p>
-      <a class="btn btn-danger" href="/personal/order-form/<%= encodedEmail %>">ORDER NOW</a>
+      <span class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal">ORDER NOW</span>
       </div>
     </div>
     </div>
@@ -117,8 +117,7 @@
                           </div>
                           
                           <div class="">
-                            <input type="text" v-model.lazy="customerEmail" class="form-control ccInput" placeholder="Email Address" disabled>
-                            <input type="hidden" id="email" name="email" v-model.lazy="customerEmail" >
+                            <input type="text" id="email" name="email" v-model.lazy="customerEmail" @change="checkEmail" class="form-control ccInput" placeholder="Email Address" disabled>
                             <input v-if="customerData && customerData.data" type="hidden" name="sourceCard" v-model="customerData.data.sourceCard">
                             <input v-if="customerData && customerData.data" type="hidden" name="customerId" v-model="customerData.data.id">
                           </div>
@@ -126,6 +125,81 @@
 
                       </div>
 
+                      <!-- SCHEDULING BLOCK START -->
+                      <div class="row">
+                        <div class="col-md-12">
+                          <label>When would you like your {{ selectedSchedules.length > 0 ? 'next' : 'first' }} lesson:</label>
+                        </div>
+
+                        <!-- DAYS SELECTION -->
+                        <div :class="'col-md-12 ' + (stepSchedule != 1 ? 'd-none':'')">
+                          <ul class="list-btns">
+                            <li><span class="btn btn-outline-danger" @click="setDay('<%= moment().add('1','days').format('l') %>', '<%= moment().add('1','days').format('dddd') %>')">Tomorrow</span></li>
+                            <li><span class="btn btn-outline-danger" @click="setDay('<%= moment().add('2','days').format('l') %>', '<%= moment().add('2','days').format('dddd') %>')"><%= moment().add('2','days').format('dddd') %></span></li>
+                            <li><span class="btn btn-outline-danger" @click="setDay('<%= moment().add('3','days').format('l') %>', '<%= moment().add('3','days').format('dddd') %>')"><%= moment().add('3','days').format('dddd') %></span></li>
+                            <li><span class="btn btn-outline-danger" @click="setDay('<%= moment().add('4','days').format('l') %>', '<%= moment().add('4','days').format('dddd') %>')"><%= moment().add('4','days').format('dddd') %></span></li>
+                            <li><span class="btn btn-outline-danger" @click="setDay('<%= moment().add('5','days').format('l') %>', '<%= moment().add('5','days').format('dddd') %>')"><%= moment().add('5','days').format('dddd') %></span></li>
+                            <li><span class="btn btn-outline-danger" @click="setDay('<%= moment().add('6','days').format('l') %>', '<%= moment().add('6','days').format('dddd') %>')"><%= moment().add('6','days').format('dddd') %></span></li>
+                          </ul>
+                        </div>
+
+                        <!-- TIME -->
+                        <div :class="'col-md-12 ' + (stepSchedule != 2 ? 'd-none':'')">
+                          <ul class="list-btns">
+                            <li><span class="btn btn-outline-danger" @click="setTime(0)">Mornings</span></li>
+                            <li><span class="btn btn-outline-danger" @click="setTime(1)">Lunch Time</span></li>
+                            <li><span class="btn btn-outline-danger" @click="setTime(2)">Afternoon</span></li>
+                            <li><span class="btn btn-outline-danger" @click="setTime(3)">Evening</span></li>
+                          </ul>
+                        </div>
+
+                        <!-- HOURS -->
+                        <div :class="'col-md-12 ' + (stepSchedule != 3 ? 'd-none':'')">
+                          <ul class="list-btns">
+                            <li v-for="time in timeSelections[selectedTime]"><span class="btn btn-outline-danger" @click="setHours(time)">{{ time }}</span></li>
+                          </ul>
+                        </div>
+
+                        <!-- OPTIONS -->
+                        <div :class="'col-md-12 ' + (stepSchedule != 4 ? 'd-none':'')">
+                          <ul class="list-btns">
+                            <li><span class="btn btn-danger" @click="selectOptions('anotherSchedule','I want to make another schedule')" >I want to make another schedule</span></li>
+                            <li><span class="btn btn-danger" @click="selectOptions('setAllForWeek','I want to make it every '+selectedDayFormat+' of the week')" >I want to make it every {{ selectedDayFormat }} of the week</span></li>
+                            <li><span class="btn btn-danger" @click="selectOptions('decideLater','I will decide later')" >I will decide later</span></li>
+                          </ul>
+                        </div>
+
+                        <!-- SELECTED SCHEDULES -->
+                        <div :class="'col-md-12 mt-2 mb-4 ' + (stepSchedule != 6 ? 'd-none':'')">
+                          <table class="table">
+                            <tr>
+                              <th>Date</th>
+                              <th>Time</th>
+                            </tr>
+                            <tr v-for="schedule in selectedSchedules">
+                              <td>{{ schedule.day }}</td>
+                              <td>{{ schedule.time }}</td>
+                            </tr>
+                            <tr v-if="selectedSchedules.length > 0 && selectedOptions != 'anotherSchedule'">
+                              <td colspan="2" >{{ selectedSchedules[selectedSchedules.length-1].optFormatted }}</td>
+                            </tr>
+                          </table>
+                        </div>
+
+                      </div>
+                      <!-- SCHEDULING BLOCK END -->
+
+                      <div class="col-md-12">
+                        <div class="form-group">
+                          <label for="selectedZone"><b>Contact Preferrence</b></label>
+                          <select class="form-control ccInput" name="contactPreferrence" v-model="contactPreferrence">
+                            <option value="" disabled>-Please Select Preferrence-</option>
+                            <option value="Skype">Skype</option>
+                            <option value="WeChat">WeChat</option>
+                          </select>
+                          <input class="form-control ccInput" type="text" name="contactPreferrenceValue" v-model="contactPreferrenceValue" :placeholder="'Please Enter '+contactPreferrence+' ID'">
+                        </div>
+                      </div>
           
                       <div class="form-group text-right">
                         <hr>
@@ -144,11 +218,10 @@
                         
                       </div>
 
-                      <div v-if="customerData && customerData.status" class="row g-3">
-                        <div class="col-md-12">
+                      <div v-if="customerData && customerData.status && stepSchedule > 5" class="row g-3">
+                        <div class="col-auto">
                           <div v-if="customerData.data.card && !otherCard" class="form-group text-right">
-                            <p class="text-left">Charge Card ending {{ customerData.data.card.last4 }}</p>
-                            <button type="button" @click="submitForm" class="btn btn-danger btn-lg">Order Now for only $299</button>
+                            <button type="button" @click="submitForm" class="btn btn-danger btn-lg">Charge Card ending {{ customerData.data.card.last4 }}</button>
                           </div>
 
                           <div v-if="otherCard" class="form-group text-right">
@@ -156,6 +229,13 @@
                           </div>
   
 
+                        </div>
+
+                        <div class="col-auto">
+                          <div class="form-group">
+                            <input class="d-none" type="checkbox" name="otherCard" v-model="otherCard" >
+                            <button type="button" :class="'btn btn-'+ (otherCard ? 'danger':'default') + ' btn-lg'" @click="newCard()">New Card</button>
+                          </div>
                         </div>
 
                       </div>
@@ -193,8 +273,8 @@
   </div>
 
 </section>
-<script src="/personal/js/vue-2.js"></script>
-<script src="https://js.stripe.com/v3/"></script>
+  <script src="/personal/js/vue-2.js"></script>
+  <script src="https://js.stripe.com/v3/"></script>
 <script>
   var stripe = Stripe('<%= helpers.getPKEY() %>');
   var vueApp = new Vue({

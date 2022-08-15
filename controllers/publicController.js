@@ -17,7 +17,7 @@ exports.index = async function(req, res, next) {
     
     // USED ONLY FOR DEV
     if (req.ip == "::1") {
-        ip = '69.162.81.155'
+        ip = '1.174.208.155'
     }
 
     let decodedEmail = req.params.email
@@ -41,15 +41,12 @@ exports.index = async function(req, res, next) {
 
     let geo = geoip.lookup(ip);
 
-    // var rpoTimeTable = new Model("timeTable")
 
-    // let timeTable = await rpoTimeTable.get()
-
-    // let timeZone = [
-    //     ['New York', 'EST', 'Pacific', 'Mountain', 'Central' ],
-    //     ['Berlin', 'Paris', 'Rome' ],
-    //     ['United Kingdom', 'IIM']
-    // ]
+    let timeZone = [
+        ['New York', 'EST', 'Pacific', 'Mountain', 'Central' ],
+        ['Berlin', 'Paris', 'Rome' ],
+        ['United Kingdom', 'IIM']
+    ]
 
     let clientTimezone = 0;
 
@@ -74,7 +71,8 @@ exports.index = async function(req, res, next) {
         title: '',
         description: '',
         keywords: '',
-        clientTimezone: geo.timezone,
+        // clientTimezone: geo.timezone,
+        clientTimezone: timeZone[clientTimezone].join(', '),
         // timeTable: timeTable,
         // timeZone: timeZone,
         custEmail: decodedEmail,
@@ -83,6 +81,79 @@ exports.index = async function(req, res, next) {
     
   
 }
+
+exports.orderForm = async function(req, res, next) {
+
+    let ip = req.ip;
+    const regexExp = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/gi;
+    
+    // USED ONLY FOR DEV
+    if (req.ip == "::1") {
+        ip = '1.174.208.155'
+    }
+
+    let decodedEmail = req.params.email
+
+    let isValidEmail = res.app.locals.helpers.checkValidEmail(req.params.email)
+
+    if (isValidEmail) {
+        console.log("valid email");
+        decodedEmail = req.params.email
+    } else {
+        decodedEmail = res.app.locals.helpers.getEncodedDecoded(req.params.email)
+    }
+
+    await userService.getUser(decodedEmail)
+
+    logService.logActivity(req, decodedEmail + " Visited personal page")
+
+    if (req.params.email) {
+        res.cookie('custEmail',decodedEmail, { maxAge: 900000, httpOnly: true });
+    }
+
+    let geo = geoip.lookup(ip);
+
+
+    let timeZone = [
+        ['New York', 'EST', 'Pacific', 'Mountain', 'Central' ],
+        ['Berlin', 'Paris', 'Rome' ],
+        ['United Kingdom', 'IIM']
+    ]
+
+    let clientTimezone = 0;
+
+    console.log(geo);
+
+    if (geo.country == 'US') {
+        clientTimezone = 0
+    }
+
+    if (geo.country == 'DE') {
+        clientTimezone = 1
+    }
+
+    if (geo.country == 'GB') {
+        clientTimezone = 2
+    }
+
+    // console.log(res.app.locals.helpers.getEncodedEmail(decodedEmail));
+
+    res.render('orderForm', {
+        layout: 'layout/public-layout-2', 
+        title: '',
+        description: '',
+        keywords: '',
+        // clientTimezone: geo.timezone,
+        clientTimezone: timeZone[clientTimezone].join(', '),
+        // timeTable: timeTable,
+        // timeZone: timeZone,
+        custEmail: decodedEmail,
+        encodedEmail: res.app.locals.helpers.getEncodedEmail(decodedEmail)
+    });
+    
+  
+}
+
 
 exports.checkout = async function(req, res, next) {
 
@@ -243,6 +314,8 @@ exports.placeorder = async function(req, res, next) {
         // console.log(paymentIntentConfirm);
 
         if ( paymentIntentConfirm ) {
+
+            console.log("==== payment ====");
             //  send email notification
             // save record to mongo158
 
@@ -262,16 +335,11 @@ exports.placeorder = async function(req, res, next) {
                 customer: users,
                 customerEmail: req.body.email,
                 timeZone: req.body.selectedZone,
-                contactPreferrence: req.body.contactPreferrence,
-                contactPreferrenceValue: req.body.contactPreferrenceValue,
-                schedules: req.body.fields,
-                charge: paymentIntentConfirm,
-                createdAt: res.app.locals.moment().format()
             }
 
             await rpoOrders.put(orderData)
 
-            emailService.sendEmailNotification(orderData)
+            // emailService.sendEmailNotification(orderData)
         }
 
         res.flash('success', 'Thank You!');
@@ -279,7 +347,7 @@ exports.placeorder = async function(req, res, next) {
         res.redirect("/personal/thankyou/"+orderNo)
 
     } catch (err) {
-        console.log(err);
+        console.log("has error",err);
         res.flash('error', 'Sorry! Something went wrong please try again later.');
         res.redirect("/personal/")
         // send admin notification 
@@ -304,6 +372,31 @@ exports.thankyou = async function(req, res, next) {
     });
     
   
+}
+
+exports.thankyouSubmit = async function(req, res, next) {
+
+    var rpoOrders = new Model("orders")
+    let orders = await rpoOrders.findQuery({orderNo: req.params.orderNo})
+    
+    console.log(req.body);
+
+    let dataUpdate = {
+        contactPreferrence: req.body.contactPreferrence,
+        contactPreferrenceValue: req.body.contactPreferrenceValue,
+        schedules: req.body.fields
+    }
+
+    await rpoOrders.update(orders[0]._id, dataUpdate)
+
+    let orderData = await rpoOrders.findQuery({orderNo: req.params.orderNo}) 
+
+    emailService.sendEmailNotification(orderData[0])
+
+    res.flash('success', 'Thank you for updating the order details!');
+
+    res.redirect("/personal/thankyou/"+orders[0].orderNo)
+    
 }
 
 exports.login = async function(req, res, next) {

@@ -1,0 +1,402 @@
+<section id="checkout-content">
+  <div class="container1">
+    <div class="row justify-content-center" style="align-items: flex-end;">
+      <div class="col-md-12">
+
+        <form id="payment-form" method="post" action="/personal/placeorder" class="orderForm">
+
+          <div class="card-body">
+
+            <div class="form-row" v-if="showError">
+              <div class="col-md-12">
+                <div class="alert alert-danger" role="alert" >
+                  {{ errorMessage }}
+                </div>
+              </div>
+            </div>
+                            
+            <div class="row g-3">
+              
+              <div class="form-row">
+                <p class="levelLabel" v-if="customerData && customerData.status">Current Level: {{ customerData.data.level ? customerData.data.level : 'newbie' }}
+
+                </p>
+                <p class="lh-1">ChinesePod Live Classes Package</p>
+                <p class="lh-1">10 sessions of one hour each</p>
+              </div>
+              <div class="col-md-12">
+                <div class="">
+                  <label for="selectedZone"><b>Time Zone : <%= clientTimezone %></b></label>
+                  <input type="hidden" name="selectedZone" value="<%= clientTimezone %>">
+                  <label for="email">Customer Email</label>
+                </div>
+                
+                <div class="">
+                  <input type="text" v-model.lazy="customerEmail" class="form-control ccInput" placeholder="Email Address" disabled>
+                  <input type="hidden" id="email" name="email" v-model.lazy="customerEmail" >
+                  <input v-if="customerData && customerData.data" type="hidden" name="sourceCard" v-model="customerData.data.sourceCard">
+                  <input v-if="customerData && customerData.data" type="hidden" name="customerId" v-model="customerData.data.id">
+                </div>
+
+                <div v-if="!vuex || !vuex.token ">
+                  <input type="password" class="form-control ccInput" v-model="customerPassword" placeholder="Password" >
+                  <span class="btn btn-danger mt-3" @click="loginAccount">Login</span>
+                </div>
+              </div>
+
+            </div>
+
+
+            <div class="form-group text-right">
+              <hr>
+            </div>
+
+            <div id="newCard" :class="(!otherCard || !customerData.status ? 'd-none':'')">
+              <div class="form-row">
+                <label for="card-element">Credit or debit card:</label>
+                <div id="card-element" class="StripeElement StripeElement--empty"></div>
+
+                <div id="card-errors" role="alert"></div>
+                <label>Name on card:</label>
+                <input class="ccInput" name="nameOnCard" type="text" placeholder="eg:John Doe">
+                 
+              </div>
+              
+            </div>
+
+            <div v-if="customerData && customerData.status" class="row g-3">
+              <div v-if="vuex && vuex.token" class="col-md-12">
+                <div v-if="customerData.data.card && !otherCard" class="form-group text-right">
+                  <p class="text-left">Charge Card ending {{ customerData.data.card.last4 }}</p>
+                  <button type="button" @click="submitForm" class="btn btn-danger btn-lg">Order Now for only $299</button>
+                </div>
+
+                <div v-if="otherCard" class="form-group text-right">
+                  <button type="button" @click="submitForm" class="btn btn-danger btn-lg">Place Order $299</button>
+                </div>
+
+
+              </div>
+
+            </div>
+            <p v-if="customerData && !customerData.status" class="text-danger">{{ customerData.message }}</p>
+
+          </div> <!-- card body -->
+
+          <div class="d-none" v-for="(fields,ndx) in selectedSchedules">
+            <input type="text" :name="'fields['+ndx+'][day]'" :value="fields.day">
+            <input type="text" :name="'fields['+ndx+'][time]'" :value="fields.time">
+            <input type="text" :name="'fields['+ndx+'][option]'" :value="fields.option">
+            <input type="text" :name="'fields['+ndx+'][optFormatted]'" :value="fields.optFormatted">
+          </div>
+
+          
+
+        </form>
+
+        
+    
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+<iframe v-if="getIframe" src="https://www.chinesepod.com/home" style="display:none"></iframe>
+<script src="/personal/js/vue-2.js"></script>
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+  var stripe = Stripe('<%= helpers.getPKEY() %>');
+  var vueApp = new Vue({
+    el: "#checkout-content",
+    data: {
+      vuex: JSON.parse(window.localStorage.getItem('vuex')),
+      customerEmail: '<%= custEmail %>',
+      customerPassword: '',
+      customerData: null,
+      showError: false,
+      errorMessage: '',
+      stripeValMessage: '',
+      otherCard: false,
+      selectedDay: '',
+      selectedDayFormat: '',
+      selectedTime: '',
+      selectedHours: '',
+      selectedOptions: '',
+      stepSchedule: 1,
+      timeSelections: [
+        ["8:30AM - 9:30PM","9:30AM - 10:30AM","10:30AM - 11:30AM"],
+        ["11:30AM - 12:30PM","12:30NN - 1:30PM"],
+        ["1:30PM - 2:30PM","2:30PM - 3:30PM","3:30PM - 4:30PM"],
+        ["4:30PM - 5:30PM","5:30PM - 6:30PM","6:30PM - 7:30PM"],
+      ],
+      selectedSchedules: [],
+      contactPreferrence: '',
+      contactPreferrenceValue: '',
+      getIframe: false,
+    },
+    methods: {
+
+      getAPIFetch: async function(api) {
+
+        let results = await fetch(api,{
+            credentials: 'same-origin',
+            headers: {
+                'Accept': 'application/json, text/plain, */*',
+                'Content-Type': 'application/json'
+            },
+        })
+        .then(resp => resp.json())
+        .then(res => {
+            // console.log("this res", res);
+            return res;
+        })
+
+        return results;
+
+      },
+
+      postAPIFetch: async function(api, params) {
+
+        let options = {
+            credentials: 'same-origin',
+            headers: {
+                'Accept': 'application/json, text/plain, */*',
+                'Content-Type': 'application/json',
+            },
+            method: "POST",
+            body: JSON.stringify(params)
+        }
+
+        let okOption = false
+
+        let results = await fetch(api,options)
+
+        .then(resp => resp.json())
+            .then(res => {
+                return res;
+            })
+
+        return results;
+
+      },
+
+      newCard: function() {
+        this.otherCard = !this.otherCard
+      },
+
+      submitForm: async function() {
+        this.errorMessage = this.validateForm
+
+        stripe.createToken(card).then(function(result) {
+          if (result.error) {
+            // Inform the user if there was an error
+            var errorElement = document.getElementById('card-errors');
+            errorElement.textContent = result.error.message;
+            this.errorMessage = result.error.message
+          } else {
+            // Send the token to your server
+            stripeTokenHandler(result.token);
+          }
+        });
+
+        if (!this.errorMessage) {
+          this.showError = false;
+          document.getElementById("payment-form").submit();
+        } else {
+          this.showError = true;
+        }
+
+      },
+
+      checkEmail: async function() {
+
+        console.log("checking", this.customerEmail);
+        if (this.customerEmail) {
+
+          let customerInfo = await fetch('/personal/api/v1/checkEmail/'+this.customerEmail)
+          .then(response => response.json());
+
+          this.customerData = customerInfo
+
+          if ( this.customerData && this.customerData.data && !this.customerData.data.card ) {
+            this.otherCard = true
+          }
+
+          console.log(this.customerData);
+
+          // this.errorMessage = this.validateForm
+          // this.showError = true;
+
+          if (this.customerData && !this.customerData.status) {
+            this.showError = true;
+            this.errorMessage = this.customerData.message
+          }
+
+        }
+
+      },
+
+      setDay : function(selectedDay,selectedDayFormat){
+        console.log(selectedDay);
+        this.selectedDay = selectedDay
+        this.selectedDayFormat = selectedDayFormat
+        this.stepSchedule++
+      },
+
+      setTime : function(selectedTime){
+        this.selectedTime = selectedTime
+        this.stepSchedule++
+      },
+
+      setHours : function(selectedHours){
+        this.selectedHours = selectedHours
+        this.stepSchedule++
+      },
+
+      selectOptions : function(option,optFormatted){
+        this.selectedOptions = option
+
+        // 
+        let data = {
+          time: this.selectedHours,
+          day: this.selectedDay,
+          option: this.selectedOptions,
+          optFormatted: optFormatted
+        }
+        this.selectedSchedules.push(data)
+
+        if (option === 'anotherSchedule') {
+          
+          this.selectedDay = ''
+          this.selectedDayFormat = ''
+          this.selectedTime = ''
+          this.selectedHours = ''
+          this.selectedOptions = ''
+          this.stepSchedule = 1
+
+          
+        } else if (option === 'setAllForWeek') {
+          this.stepSchedule = 6
+        } else {
+          // decide later
+          this.stepSchedule = 6
+        }
+
+        console.log(this.selectedSchedules);
+
+      },
+
+      loginAccount : async function(){
+        let params = {emailAddress: this.customerEmail, password: this.customerPassword, clientId: "dashboard", rememberMe: true}
+
+        let responseLogin = await this.postAPIFetch('https://www.chinesepod.com/api/v1/entrance/login', params)
+        console.log("login response",responseLogin);
+      },
+
+    },
+    computed: {
+
+      validateForm : function() {
+
+        let message = ""
+        if (!this.customerEmail) {
+          message = "Please enter email address."
+        } else if (!this.customerData || !this.customerData.status) {
+          message = "Sorry, We could not find any active ChinesePod subscription."
+        } 
+        // else if (!this.contactPreferrenceValue || !this.contactPreferrence) {
+        //   message = "Please select contact preferremces"
+        // }
+
+        return message;
+      }
+    }
+
+  })
+
+  vueApp.checkEmail()
+
+  if (vueApp.vuex) {
+    console.log(vueApp.vuex);
+    if (vueApp.customerEmail != vueApp.vuex.userInfo.email) {
+      vueApp.getAPIFetch('https://www.chinesepod.com/api/v1/account/logout')
+    }
+  }
+  
+
+  // Create an instance of Elements
+  var elements = stripe.elements();
+
+  // Custom styling can be passed to options when creating an Element.
+  // (Note that this demo uses a wider set of styles than the guide below.)
+  var style = {
+    base: {
+    color: '#32325d',
+    lineHeight: '18px',
+    fontFamily: 'Roboto,sans-serif',
+    fontSmoothing: 'antialiased',
+    fontSize: '16px',
+    '::placeholder': {
+      color: '#aab7c4'
+    }
+    },
+    invalid: {
+    color: '#e1001e',
+    iconColor: '#e1001e'
+    }
+  };
+
+  // Create an instance of the card Element
+  var card = elements.create('card', {style: style});
+
+  // Add an instance of the card Element into the 'card-element' <div>
+  card.mount('#card-element');
+
+  // Handle real-time validation errors from the card Element.
+  card.addEventListener('change', function(event) {
+    var displayError = document.getElementById('card-errors');
+    if (event.error) {
+    displayError.textContent = event.error.message;
+    vueApp.stripeValMessage = event.error.message;
+    } else {
+    displayError.textContent = '';
+    vueApp.stripeValMessage = '';
+    }
+
+    
+  });
+
+  // Handle form submission
+  // var form = document.getElementById('payment-form');
+  // form.addEventListener('submit', function(event) {
+  //   event.preventDefault();
+
+    
+  // });
+  
+  function getPlatformInfo(x){
+      if(x === 'iptGMAddress'){
+      document.getElementById("iptGMAddress").classList.remove("d-none")
+      document.getElementById("iptSkypeID").classList.add("d-none")
+      } else if(x === 'iptSkypeID'){
+      document.getElementById("iptSkypeID").classList.remove("d-none")
+      document.getElementById("iptGMAddress").classList.add("d-none")
+      }
+  }
+  // Submit the form with the token ID.
+  function stripeTokenHandler(token) {
+    // Insert the token ID into the form so it gets submitted to the server
+    var form = document.getElementById('payment-form');
+    var hiddenInput = document.createElement('input');
+    hiddenInput.setAttribute('type', 'hidden');
+    hiddenInput.setAttribute('name', 'stripeToken');
+    hiddenInput.setAttribute('value', token.id);
+    form.appendChild(hiddenInput);
+
+    // Submit the form
+    form.submit();
+  }
+</script>

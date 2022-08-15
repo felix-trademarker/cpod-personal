@@ -17,8 +17,14 @@ router.get([
 ],publicController.index);
 
 router.get([
-    '/personal/form/checkout'
-],publicController.checkout);
+    '/',
+    '/personal/',
+    '/personal/order-form/:email'
+],publicController.orderForm);
+
+// router.get([
+//     '/personal/form/checkout'
+// ],publicController.checkout);
 
 router.get([
     '/personal/login/:email'
@@ -31,6 +37,10 @@ router.get([
 router.get([
     '/personal/thankyou/:orderNo'
 ],publicController.thankyou);
+
+router.post([
+    '/personal/thankyou-update/:orderNo'
+],publicController.thankyouSubmit);
 
 router.post([
     '/personal/placeorder'
