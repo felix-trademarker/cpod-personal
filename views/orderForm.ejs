@@ -38,9 +38,16 @@
                   <input v-if="customerData && customerData.data" type="hidden" name="customerId" v-model="customerData.data.id">
                 </div>
 
-                <div v-if="!vuex || !vuex.token ">
-                  <input type="password" class="form-control ccInput" v-model="customerPassword" placeholder="Password" >
-                  <span class="btn btn-danger mt-3" @click="loginAccount">Login</span>
+                <div v-if="!isLogin">
+                  <!-- <input type="password" class="form-control ccInput" v-model="customerPassword" placeholder="Password" > -->
+
+                  <a class="btn btn-danger mt-3" href="/login">Login</a>
+                </div>
+
+                <div v-if="isLogin && !correctAccount">
+                  <!-- <input type="password" class="form-control ccInput" v-model="customerPassword" placeholder="Password" > -->
+                  <span class="text-danger">Please login with your account ({{ customerEmail }})</span><br>
+                  <a class="btn btn-danger mt-3" href="/login">Login</a>
                 </div>
               </div>
 
@@ -65,7 +72,7 @@
             </div>
 
             <div v-if="customerData && customerData.status" class="row g-3">
-              <div v-if="vuex && vuex.token" class="col-md-12">
+              <div v-if="isLogin && correctAccount" class="col-md-12">
                 <div v-if="customerData.data.card && !otherCard" class="form-group text-right">
                   <p class="text-left">Charge Card ending {{ customerData.data.card.last4 }}</p>
                   <button type="button" @click="submitForm" class="btn btn-danger btn-lg">Order Now for only $299</button>
@@ -312,6 +319,20 @@
         // }
 
         return message;
+      }, 
+
+      isLogin : function () {
+        if (this.vuex && this.vuex.token)
+          return true
+        else 
+          return false 
+      },
+
+      correctAccount : function () {
+        if (this.vuex && this.vuex.userInfo.email == this.customerEmail)
+          return true
+        else 
+          return false 
       }
     }
 
