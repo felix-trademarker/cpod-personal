@@ -56,42 +56,45 @@
                       </div>
                     <!-- SCHEDULING BLOCK START -->
                   <div class="row">
-                    <div class="col-md-12 text-center">
+                    <div class="col-md-12 text-center mb-3">
                       <h2>We're almost there!</h2>
                       <h3>When would you like your {{ selectedSchedules.length > 0 ? 'next' : 'first' }} lesson:</h3>
                     </div>
 
                     <!-- DAYS SELECTION -->
-                    <div :class="'col-md-12 ' + (stepSchedule != 1 ? 'd-none':'')">
+                    <div :class="'col-md-12  ' + (stepSchedule < 1 ? 'd-none':'')">
                       <ul class="list-btns">
-                        <li><span class="btn btn-outline-danger" @click="setDay('<%= moment().add('1','days').format('l') %>', '<%= moment().add('1','days').format('dddd') %>')">Tomorrow</span></li>
-                        <li><span class="btn btn-outline-danger" @click="setDay('<%= moment().add('2','days').format('l') %>', '<%= moment().add('2','days').format('dddd') %>')"><%= moment().add('2','days').format('dddd') %></span></li>
-                        <li><span class="btn btn-outline-danger" @click="setDay('<%= moment().add('3','days').format('l') %>', '<%= moment().add('3','days').format('dddd') %>')"><%= moment().add('3','days').format('dddd') %></span></li>
-                        <li><span class="btn btn-outline-danger" @click="setDay('<%= moment().add('4','days').format('l') %>', '<%= moment().add('4','days').format('dddd') %>')"><%= moment().add('4','days').format('dddd') %></span></li>
-                        <li><span class="btn btn-outline-danger" @click="setDay('<%= moment().add('5','days').format('l') %>', '<%= moment().add('5','days').format('dddd') %>')"><%= moment().add('5','days').format('dddd') %></span></li>
-                        <li><span class="btn btn-outline-danger" @click="setDay('<%= moment().add('6','days').format('l') %>', '<%= moment().add('6','days').format('dddd') %>')"><%= moment().add('6','days').format('dddd') %></span></li>
+                        <li><span :class="'btn btn-'+ (selectedDayFormat == '<%= moment().add('1','days').format('dddd') %>' ? '' : 'outline-') +'danger'" @click="setDay('<%= moment().add('1','days').format('l') %>', '<%= moment().add('1','days').format('dddd') %>')">Tomorrow</span></li>
+                        <li><span :class="'btn btn-'+ (selectedDayFormat == '<%= moment().add('2','days').format('dddd') %>' ? '' : 'outline-') +'danger'" @click="setDay('<%= moment().add('2','days').format('l') %>', '<%= moment().add('2','days').format('dddd') %>')"><%= moment().add('2','days').format('dddd') %></span></li>
+                        <li><span :class="'btn btn-'+ (selectedDayFormat == '<%= moment().add('3','days').format('dddd') %>' ? '' : 'outline-') +'danger'" @click="setDay('<%= moment().add('3','days').format('l') %>', '<%= moment().add('3','days').format('dddd') %>')"><%= moment().add('3','days').format('dddd') %></span></li>
+                        <li><span :class="'btn btn-'+ (selectedDayFormat == '<%= moment().add('4','days').format('dddd') %>' ? '' : 'outline-') +'danger'" @click="setDay('<%= moment().add('4','days').format('l') %>', '<%= moment().add('4','days').format('dddd') %>')"><%= moment().add('4','days').format('dddd') %></span></li>
+                        <li><span :class="'btn btn-'+ (selectedDayFormat == '<%= moment().add('5','days').format('dddd') %>' ? '' : 'outline-') +'danger'" @click="setDay('<%= moment().add('5','days').format('l') %>', '<%= moment().add('5','days').format('dddd') %>')"><%= moment().add('5','days').format('dddd') %></span></li>
+                        <li><span :class="'btn btn-'+ (selectedDayFormat == '<%= moment().add('6','days').format('dddd') %>' ? '' : 'outline-') +'danger'" @click="setDay('<%= moment().add('6','days').format('l') %>', '<%= moment().add('6','days').format('dddd') %>')"><%= moment().add('6','days').format('dddd') %></span></li>
                       </ul>
                     </div>
 
                     <!-- TIME -->
-                    <div :class="'col-md-12 ' + (stepSchedule != 2 ? 'd-none':'')">
+                    <div :class="'col-md-12 ' + (stepSchedule < 2 ? 'd-none':'')">
+                      <hr style="margin:0">
                       <ul class="list-btns">
-                        <li><span class="btn btn-outline-danger" @click="setTime(0)">Mornings</span></li>
-                        <li><span class="btn btn-outline-danger" @click="setTime(1)">Lunch Time</span></li>
-                        <li><span class="btn btn-outline-danger" @click="setTime(2)">Afternoon</span></li>
-                        <li><span class="btn btn-outline-danger" @click="setTime(3)">Evening</span></li>
+                        <li><span :class="'btn btn-'+ (selectedTime == 0 ? '' : 'outline-') +'danger'" @click="setTime(0)">Mornings</span></li>
+                        <li><span :class="'btn btn-'+ (selectedTime == 1 ? '' : 'outline-') +'danger'" @click="setTime(1)">Lunch Time</span></li>
+                        <li><span :class="'btn btn-'+ (selectedTime == 2 ? '' : 'outline-') +'danger'" @click="setTime(2)">Afternoon</span></li>
+                        <li><span :class="'btn btn-'+ (selectedTime == 3 ? '' : 'outline-') +'danger'" @click="setTime(3)">Evening</span></li>
                       </ul>
                     </div>
 
                     <!-- HOURS -->
-                    <div :class="'col-md-12 ' + (stepSchedule != 3 ? 'd-none':'')">
-                      <ul class="list-btns">
-                        <li v-for="time in timeSelections[selectedTime]"><span class="btn btn-outline-danger" @click="setHours(time)">{{ time }}</span></li>
+                    <div :class="'col-md-12 ' + (stepSchedule < 3 ? 'd-none':'')">
+                      <hr style="margin:0">
+                      <ul v-if="selectedTime >= 0" class="list-btns">
+                        <li v-for="time in timeSelections[selectedTime]"><span :class="'btn btn-'+ (time == selectedHours ? '' : 'outline-') +'danger'" @click="setHours(time)">{{ time }}</span></li>
                       </ul>
                     </div>
 
                     <!-- OPTIONS -->
-                    <div :class="'col-md-12 ' + (stepSchedule != 4 ? 'd-none':'')">
+                    <div :class="'col-md-12 ' + (stepSchedule < 4 ? 'd-none':'')">
+                      <hr style="margin:0">
                       <ul class="list-btns">
                         <li><span class="btn btn-danger" @click="selectOptions('anotherSchedule','I want to make another schedule')" >I want to make another schedule</span></li>
                         <li><span class="btn btn-danger" @click="selectOptions('setAllForWeek','I want to make it every '+selectedDayFormat+' of the week')" >I want to make it every {{ selectedDayFormat }} of the week</span></li>
@@ -206,7 +209,7 @@
       otherCard: false,
       selectedDay: '',
       selectedDayFormat: '',
-      selectedTime: '',
+      selectedTime: -1,
       selectedHours: '',
       selectedOptions: '',
       stepSchedule: 1,
@@ -243,20 +246,20 @@
       },
 
       setDay : function(selectedDay,selectedDayFormat){
-        console.log(selectedDay);
+        console.log(selectedDay, selectedDayFormat);
         this.selectedDay = selectedDay
         this.selectedDayFormat = selectedDayFormat
-        this.stepSchedule++
+        this.stepSchedule = 2
       },
 
       setTime : function(selectedTime){
         this.selectedTime = selectedTime
-        this.stepSchedule++
+        this.stepSchedule = 3
       },
 
       setHours : function(selectedHours){
         this.selectedHours = selectedHours
-        this.stepSchedule++
+        this.stepSchedule = 4
 
         // 
         let data = {
@@ -295,16 +298,26 @@
           
           this.selectedDay = ''
           this.selectedDayFormat = ''
-          this.selectedTime = ''
+          this.selectedTime = -1
           this.selectedHours = ''
           this.selectedOptions = ''
           this.stepSchedule = 1
 
         } else if (option === 'setAllForWeek') {
-          this.stepSchedule = 6
+          this.selectedDay = ''
+          this.selectedDayFormat = ''
+          this.selectedTime = -1
+          this.selectedHours = ''
+          this.selectedOptions = ''
+          this.stepSchedule = 0
         } else {
           // decide later
-          this.stepSchedule = 6
+          this.selectedDay = ''
+          this.selectedDayFormat = ''
+          this.selectedTime = -1
+          this.selectedHours = ''
+          this.selectedOptions = ''
+          this.stepSchedule = 0
         }
 
         this.selectedSchedules[(this.selectedSchedules.length-1)].option = option
