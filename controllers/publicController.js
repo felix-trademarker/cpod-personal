@@ -114,27 +114,27 @@ exports.orderForm = async function(req, res, next) {
     let geo = geoip.lookup(ip);
 
 
-    let timeZone = [
-        ['New York', 'EST', 'Pacific', 'Mountain', 'Central' ],
-        ['Berlin', 'Paris', 'Rome' ],
-        ['United Kingdom', 'IIM']
-    ]
+    // let timeZone = [
+    //     ['New York', 'EST', 'Pacific', 'Mountain', 'Central' ],
+    //     ['Berlin', 'Paris', 'Rome' ],
+    //     ['United Kingdom', 'IIM']
+    // ]
 
-    let clientTimezone = 0;
+    // let clientTimezone = 0;
 
-    console.log(geo);
+    // console.log(geo);
 
-    if (geo.country == 'US') {
-        clientTimezone = 0
-    }
+    // if (geo.country == 'US') {
+    //     clientTimezone = 0
+    // }
 
-    if (geo.country == 'DE') {
-        clientTimezone = 1
-    }
+    // if (geo.country == 'DE') {
+    //     clientTimezone = 1
+    // }
 
-    if (geo.country == 'GB') {
-        clientTimezone = 2
-    }
+    // if (geo.country == 'GB') {
+    //     clientTimezone = 2
+    // }
 
     var rpoTimeZone = new Model("timeZone")
     let timeZones = await rpoTimeZone.findQuery({timeZoneID: geo.timezone})
