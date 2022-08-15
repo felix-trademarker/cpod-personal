@@ -99,27 +99,46 @@
                       </ul>
                     </div>
 
-                    <!-- SELECTED SCHEDULES -->
-                    <div :class="'col-md-12 mt-2 mb-4 ' + (stepSchedule != 6 ? 'd-none':'')">
-                      <table class="table">
-                        <tr>
-                          <th>Date</th>
-                          <th>Time</th>
-                        </tr>
-                        <tr v-for="schedule in selectedSchedules">
-                          <td>{{ schedule.day }}</td>
-                          <td>{{ schedule.time }}</td>
-                        </tr>
-                        <tr v-if="selectedSchedules.length > 0 && selectedOptions != 'anotherSchedule'">
-                          <td colspan="2" >{{ selectedSchedules[selectedSchedules.length-1].optFormatted }}</td>
-                        </tr>
-                      </table>
-                    </div>
+                   
 
                   </div>
                   <!-- SCHEDULING BLOCK END -->
 
+                  <div v-if="selectedSchedules && selectedSchedules.length > 0" class="col-md-12 mt-2 mb-4">
+                    <table class="table">
+                      <tr>
+                        <th>Date</th>
+                        <th>Time</th>
+                      </tr>
+                      <tr v-for="schedule in selectedSchedules">
+                        <td>{{ schedule.day }}</td>
+                        <td>{{ schedule.time }}</td>
+                      </tr>
+                      <tr v-if="selectedSchedules.length > 0 && selectedOptions != 'anotherSchedule'">
+                        <td colspan="2" >{{ selectedSchedules[selectedSchedules.length-1].optFormatted }}</td>
+                      </tr>
+                    </table>
+                  </div>
+
                   <div class="col-md-12">
+
+                    <div class="form-group">
+                      <label for="">Timezone: <%= orders.timeZone %></label>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="selectedZone"><b>Lesson Level</b></label>
+                      <select class="form-control ccInput" name="customerLevel" v-model="customerLevel">
+                        <option value="" disabled>-Please Select Lesson Level-</option>
+                        <option value="Newbie" <%= (orders.customer.level == 'Newbie' ? 'selected' : '') %>>Newbie</option>
+                        <option value="Elementary" <%= (orders.customer.level == 'Elementary' ? 'selected' : '') %>>Elementary</option>
+                        <option value="Pre Intermediate" <%= (orders.customer.level == 'Pre Intermediate' ? 'selected' : '') %>>Pre Intermediate</option>
+                        <option value="Intermediate" <%= (orders.customer.level == 'Intermediate' ? 'selected' : '') %>>Intermediate</option>
+                        <option value="Upper Intermediate" <%= (orders.customer.level == 'Upper Intermediate' ? 'selected' : '') %>>Upper Intermediate</option>
+                        <option value="Advanced" <%= (orders.customer.level == 'Advanced' ? 'selected' : '') %>>Advanced</option>
+                      </select>
+                    </div>
+                    
                     <div class="form-group">
                       <label for="selectedZone"><b>Contact Preferrence</b></label>
                       <select class="form-control ccInput" name="contactPreferrence" v-model="contactPreferrence">
@@ -180,7 +199,7 @@
     data: {
       vuex: JSON.parse(window.localStorage.getItem('vuex')),
 
-      customerData: null,
+      customerEmail: '',
       showError: false,
       errorMessage: '',
       stripeValMessage: '',
@@ -199,7 +218,8 @@
       ],
       selectedSchedules: [],
       contactPreferrence: '',
-      contactPreferrenceValue: ''
+      contactPreferrenceValue: '',
+      customerLevel: '<%= orders.customer.level %>'
     },
     methods: {
 
@@ -237,19 +257,39 @@
       setHours : function(selectedHours){
         this.selectedHours = selectedHours
         this.stepSchedule++
-      },
-
-      selectOptions : function(option,optFormatted){
-        this.selectedOptions = option
 
         // 
         let data = {
           time: this.selectedHours,
           day: this.selectedDay,
           option: this.selectedOptions,
-          optFormatted: optFormatted
+          optFormatted: ''
         }
-        this.selectedSchedules.push(data)
+
+        let hasDuplicate = false;
+        // check duplicates
+        for (let i=0; i < this.selectedSchedules.length; i++) {
+          if (
+            this.selectedSchedules[i].time == data.time 
+            && this.selectedSchedules[i].day == data.day
+          ) {
+            hasDuplicate = true;
+          }
+        }
+
+        if (!hasDuplicate) {
+          this.selectedSchedules.push(data)
+        } else {
+          this.stepSchedule--
+          alert("Sorry, Schedule already selected!");
+        }
+
+      },
+
+      selectOptions : function(option,optFormatted){
+        this.selectedOptions = option
+
+        
 
         if (option === 'anotherSchedule') {
           
@@ -260,13 +300,15 @@
           this.selectedOptions = ''
           this.stepSchedule = 1
 
-          
         } else if (option === 'setAllForWeek') {
           this.stepSchedule = 6
         } else {
           // decide later
           this.stepSchedule = 6
         }
+
+        this.selectedSchedules[(this.selectedSchedules.length-1)].option = option
+        this.selectedSchedules[(this.selectedSchedules.length-1)].optFormatted = optFormatted
 
         console.log(this.selectedSchedules);
 
@@ -292,5 +334,7 @@
     }
 
   })
+
+
 
 </script>

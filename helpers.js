@@ -33,18 +33,18 @@ exports.checkValidEmail = function(email) {
 exports.convertIntToStringLevel = function(level) {
     switch (level) {
         case 1:
-          return 'newbie';
+          return 'Newbie';
         case 2:
-          return 'elementary';
+          return 'Elementary';
         case 6:
-          return 'preInt';
+          return 'Pre Intermediate';
         case 3:
-          return 'intermediate';
+          return 'Intermediate';
         case 4:
-          return 'upperInt';
+          return 'Upper Intermediate';
         case 5:
-          return 'advanced';
+          return 'Advanced';
         default:
-          return 'newbie'
+          return 'Newbie'
     }
 }

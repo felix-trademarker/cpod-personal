@@ -342,7 +342,7 @@ exports.placeorder = async function(req, res, next) {
 
             await rpoOrders.put(orderData)
 
-            // emailService.sendEmailNotification(orderData)
+            emailService.sendInitialOrder(orderData)
         }
 
         res.flash('success', 'Thank You!');
@@ -371,7 +371,8 @@ exports.thankyou = async function(req, res, next) {
         title: '',
         description: '',
         keywords: '',
-        orders: (orders && orders.length > 0 ? orders[0] : null)
+        orders: (orders && orders.length > 0 ? orders[0] : null),
+        custEmail: (orders && orders.length > 0 ? orders[0].customer.email : '')
     });
     
   
@@ -385,6 +386,7 @@ exports.thankyouSubmit = async function(req, res, next) {
     console.log(req.body);
 
     let dataUpdate = {
+        customerLevel: req.body.customerLevel,
         contactPreferrence: req.body.contactPreferrence,
         contactPreferrenceValue: req.body.contactPreferrenceValue,
         schedules: req.body.fields

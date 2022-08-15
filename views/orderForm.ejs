@@ -29,7 +29,7 @@
                   <label for="selectedZone">Time Zone : <%= clientTimezone %></label>
                   <input type="hidden" name="selectedZone" value="<%= clientTimezone %>">
                   <label v-if="customerData && customerData.status">
-                    Customer Level: {{ customerData.data.level ? customerData.data.level : 'newbie' }}
+                    Customer Level: {{ customerData.data.level ? customerData.data.level : 'Newbie' }}
                   </label>
                   <label for="email">Customer Email</label>
                   <input type="text" v-model.lazy="customerEmail" class="form-control ccInput" placeholder="Email Address" disabled>

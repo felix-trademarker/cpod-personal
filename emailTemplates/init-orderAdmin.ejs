@@ -71,7 +71,7 @@
                         <td><%= orders.customer.name %></td>
                         <td><%= orders.customer.email %></td>
                         <td><%= orders.customer.username %></td>
-                        <td><%= orders.contactPreferrence ? orders.contactPreferrence + (orders.contactPreferrenceValue ? ' : '+orders.contactPreferrenceValue : '') : '-' %></td>
+                        <td>-</td>
                         <td><%= orders.customer.level %></td>
                     </tr>
                     </table>
@@ -90,26 +90,13 @@
                         <td><%= orders.customerLevel %></td>
                         <td><%= orders.description %></td>
                         <td>
-                          Zone: <%= orders.timeZone %><br>
-                          <% if( Array.isArray(orders.schedules) ) { %>
-                            Schedules:
-                            <ul class="list">
-                            <% for(let i=0; i < orders.schedules.length; i++){  %>
-                              <li><%= orders.schedules[i].day %> - <%= orders.schedules[i].time %></li>
-                            <% } %>
-                            </ul>
-                            <p v-if="orders.schedules[orders.schedules.length-1].option != 'anotherSchedule'">Option : <%= orders.schedules[orders.schedules.length-1].optFormatted %></p>
-                          <% } else { %>
-                            Schedules:
-                            <ul class="list">
-                                <li> <%= orders.schedules.day %> - <%= orders.schedules.time %> : <%= orders.schedules.optFormatted %></li>
-                            </ul>
-                          <% } %>
+                          Zone: <%= orders.timeZone %>
+                          
                         </td>
                         <td style="text-align:right; font-weight: 600;">$<%= orders.amount %></td>
                     </tr>
                     <tr>
-                        <th colspan="3" style="text-align: right;">Total Amount</th>
+                        <th colspan="4" style="text-align: right;">Total Amount</th>
                         <th style="text-align: right;">$299</th>
                     </tr>
                     </table>
