@@ -110,8 +110,7 @@
               
             </div>
 
-            
-            <p v-if="customerData && !customerData.status" class="text-danger">{{ customerData.message }}</p>
+           
 
           </div> <!-- card body -->
 
@@ -209,7 +208,7 @@
 
         .then(resp => {
           console.log("resp", resp);
-          if (resp.status == 401) {
+          if (resp.status != 200) {
             return 'Invalid'
           } else {
             return resp.json()
