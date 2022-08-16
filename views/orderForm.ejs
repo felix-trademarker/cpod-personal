@@ -332,7 +332,7 @@
           email : this.customerEmail
         }
 
-        window.localStorage.setItem('vuex', vuexData);
+        window.localStorage.setItem('vuex', JSON.stringify(vuexData));
         this.vuex = vuexData
       },
 
