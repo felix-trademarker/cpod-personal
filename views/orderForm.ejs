@@ -326,6 +326,14 @@
 
         let responseLogin = await this.postAPIFetch('https://www.chinesepod.com/api/v1/entrance/login', params)
         console.log("login response",responseLogin);
+
+        let vuexData = responseLogin
+        vuexData.userInfo = {
+          email : this.customerEmail
+        }
+
+        window.localStorage.setItem('vuex', vuexData);
+        this.vuex = vuexData
       },
 
     },
