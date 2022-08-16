@@ -43,14 +43,14 @@
 
                 <div v-if="!isLogin">
                   <input type="password" class="form-control ccInput" v-model="customerPassword" placeholder="Password" >
-
-                  <a class="btn btn-danger mt-3" @click="loginAccount" href="#">Login</a>
+                  <p v-if="loginResponse" class="text-danger">{{ loginResponse }}</p>
+                  <a class="btn btn-danger" @click="loginAccount" href="#">Login</a>
                 </div>
 
                 <div v-if="isLogin && !correctAccount">
                   <!-- <input type="password" class="form-control ccInput" v-model="customerPassword" placeholder="Password" > -->
                   <span class="text-danger">Please login with your account ({{ customerEmail }})</span><br>
-                  <a class="btn btn-danger mt-3" href="/login">Login</a>
+                  <a class="btn btn-danger " href="/login">Login</a>
                 </div>
               </div>
 
@@ -168,6 +168,7 @@
       contactPreferrence: '',
       contactPreferrenceValue: '',
       getIframe: false,
+      loginResponse: ''
     },
     methods: {
 
@@ -327,13 +328,20 @@
         let responseLogin = await this.postAPIFetch('https://www.chinesepod.com/api/v1/entrance/login', params)
         console.log("login response",responseLogin);
 
-        let vuexData = responseLogin
-        vuexData.userInfo = {
-          email : this.customerEmail
-        }
+        if (responseLogin && responseLogin.token) {
+          let vuexData = responseLogin
+          vuexData.userInfo = {
+            email : this.customerEmail
+          }
 
-        window.localStorage.setItem('vuex', JSON.stringify(vuexData));
-        this.vuex = vuexData
+          window.localStorage.setItem('vuex', JSON.stringify(vuexData));
+          this.vuex = vuexData
+
+          this.loginResponse = ""
+        } else {
+          this.loginResponse = "Invalid Credentials"
+        }
+        
       },
 
     },
