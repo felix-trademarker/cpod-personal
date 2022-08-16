@@ -208,9 +208,10 @@
         let results = await fetch(api,options)
 
         .then(resp => resp.json())
-            // .then(res => {
-            //     return res;
-            // })
+            .then(res => {
+              console.log("this res", res);
+                return res;
+            })
 
         return results;
 
