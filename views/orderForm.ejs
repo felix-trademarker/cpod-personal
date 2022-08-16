@@ -42,9 +42,9 @@
                 </div>
 
                 <div v-if="!isLogin">
-                  <!-- <input type="password" class="form-control ccInput" v-model="customerPassword" placeholder="Password" > -->
+                  <input type="password" class="form-control ccInput" v-model="customerPassword" placeholder="Password" >
 
-                  <a class="btn btn-danger mt-3" href="/login">Login</a>
+                  <a class="btn btn-danger mt-3" @click="loginAccount" href="#">Login</a>
                 </div>
 
                 <div v-if="isLogin && !correctAccount">
