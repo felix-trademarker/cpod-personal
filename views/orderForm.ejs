@@ -209,7 +209,11 @@
 
         .then(resp => {
           console.log("resp", resp);
-          return resp.json()
+          if (resp.status == 401) {
+            return 'Invalid'
+          } else {
+            return resp.json()
+          }
         })
             .then(res => {
               console.log("this res", res);
