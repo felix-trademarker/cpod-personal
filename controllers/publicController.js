@@ -103,6 +103,11 @@ exports.orderForm = async function(req, res, next) {
     } else {
         decodedEmail = res.app.locals.helpers.getEncodedDecoded(req.params.email)
         // decodedEmail = null
+
+        console.log(decodedEmail);
+        if (!res.app.locals.helpers.checkValidEmail(decodedEmail)) {
+            decodedEmail = null
+        }
     }
 
     console.log(decodedEmail);
@@ -159,19 +164,22 @@ exports.placeorder = async function(req, res, next) {
     try {
 
         const customers = await stripe.customers.search({
-            query: 'email:"asdas'+req.body.email+'"',
+            query: 'email:"'+req.body.email+'"',
         });
 
         // res.flash('error', 'Sorry, We could not find any active ChinesePod subscription.');
         // res.redirect("/personal/order-form/"+res.app.locals.helpers.getEncodedEmail(req.body.email))
         // return;
     
-        // if (customers && customers.data.length <= 0) {
-        //     res.flash('error', 'Sorry, We could not find any active ChinesePod subscription.');
-        //     res.redirect("/personal/order-form/"+res.app.locals.helpers.getEncodedEmail(req.body.email))
-        // }
+        if (customers && customers.data.length <= 0) {
+            res.flash('error', 'Sorry, We could not find any active ChinesePod subscription.');
+            res.redirect("/personal/order-form/"+res.app.locals.helpers.getEncodedEmail(req.body.email))
+        }
 
-        
+        // res.flash('error', 'Sorry, Something went wrong with the transaction. Please check the card details.');
+        // res.redirect("/personal/order-form/"+res.app.locals.helpers.getEncodedEmail(req.body.email))
+
+        return
 
         let paymentIntentConfirm;
         let customerSource = ''
@@ -261,7 +269,7 @@ exports.placeorder = async function(req, res, next) {
 
     } catch (err) {
         console.log("has error",err);
-        res.flash('error', 'Sorry! Something went wrong please try again later.');
+        res.flash('error', 'Sorry! Something went wrong please try again later. ' + err.message);
         res.redirect("/personal/order-form/"+res.app.locals.helpers.getEncodedEmail(req.body.email))
         // send admin notification 
 
