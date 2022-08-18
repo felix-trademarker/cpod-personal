@@ -98,14 +98,16 @@ exports.orderForm = async function(req, res, next) {
 
     if (isValidEmail) {
         console.log("valid email");
-        decodedEmail = req.params.email
+        // decodedEmail = req.params.email
+        decodedEmail = null
     } else {
         decodedEmail = res.app.locals.helpers.getEncodedDecoded(req.params.email)
+        // decodedEmail = null
     }
 
-    await userService.getUser(decodedEmail)
+    console.log(decodedEmail);
 
-    logService.logActivity(req, decodedEmail + " Visited personal page")
+    logService.logActivity(req, decodedEmail + " proceed to order form")
 
     if (req.params.email) {
         res.cookie('custEmail',decodedEmail, { maxAge: 900000, httpOnly: true });
@@ -113,117 +115,17 @@ exports.orderForm = async function(req, res, next) {
 
     let geo = geoip.lookup(ip);
 
-
-    // let timeZone = [
-    //     ['New York', 'EST', 'Pacific', 'Mountain', 'Central' ],
-    //     ['Berlin', 'Paris', 'Rome' ],
-    //     ['United Kingdom', 'IIM']
-    // ]
-
-    // let clientTimezone = 0;
-
-    // console.log(geo);
-
-    // if (geo.country == 'US') {
-    //     clientTimezone = 0
-    // }
-
-    // if (geo.country == 'DE') {
-    //     clientTimezone = 1
-    // }
-
-    // if (geo.country == 'GB') {
-    //     clientTimezone = 2
-    // }
-
     var rpoTimeZone = new Model("timeZone")
     let timeZones = await rpoTimeZone.findQuery({timeZoneID: geo.timezone})
-    console.log(timeZones);
-    // console.log(res.app.locals.helpers.getEncodedEmail(decodedEmail));
 
     res.render('orderForm', {
         layout: 'layout/public-layout-2', 
         title: '',
         description: '',
         keywords: '',
-        // clientTimezone: geo.timezone,
         clientTimezone: timeZones[0].displayName,
-        // timeTable: timeTable,
-        // timeZone: timeZone,
         custEmail: decodedEmail,
-        encodedEmail: res.app.locals.helpers.getEncodedEmail(decodedEmail)
-    });
-    
-  
-}
-
-
-exports.checkout = async function(req, res, next) {
-
-    // console.log("cookie",req.cookies.custEmail)
-
-    let testEmail = "test@test.cc"
-    const customers = await stripe.customers.search({
-        query: 'email:"'+testEmail+'"',
-    });
-    
-
-    console.log("customers", customers);
-
-    let customerId = customers.data[customers.data.length - 1].id
-    let customerSource = customers.data[customers.data.length - 1].default_source
-    const card = await stripe.customers.retrieveSource(
-        customerId,
-        customerSource
-    );
-
-
-    console.log("Card Info", card);
-    return;
-    let ip = req.ip;
-    
-    // USED ONLY FOR DEV
-    if (req.ip == "::1") {
-        ip = '69.162.81.155'
-    }
-
-    let geo = geoip.lookup(ip);
-
-    var rpoTimeTable = new Model("timeTable")
-
-    let timeTable = await rpoTimeTable.get()
-
-    let timeZone = [
-        ['New York', 'EST', 'Pacific', 'Mountain', 'Central' ],
-        ['Berlin', 'Paris', 'Rome' ],
-        ['United Kingdom', 'IIM']
-    ]
-
-    let clientTimezone = 0;
-
-    if (geo.country == 'US') {
-        clientTimezone = 0
-    }
-
-    if (geo.country == 'DE') {
-        clientTimezone = 1
-    }
-
-    if (geo.country == 'GB') {
-        clientTimezone = 2
-    }
-
-    // console.log(geo);
-
-    res.render('checkout', {
-        layout: 'layout/public-layout-2', 
-        title: '',
-        description: '',
-        keywords: '',
-        clientTimezone: clientTimezone,
-        timeTable: timeTable,
-        timeZone: timeZone,
-        custEmail: req.cookies.custEmail
+        encodedEmail: (decodedEmail ? res.app.locals.helpers.getEncodedEmail(decodedEmail) : decodedEmail)
     });
     
   
@@ -257,13 +159,19 @@ exports.placeorder = async function(req, res, next) {
     try {
 
         const customers = await stripe.customers.search({
-            query: 'email:"'+req.body.email+'"',
+            query: 'email:"asdas'+req.body.email+'"',
         });
+
+        // res.flash('error', 'Sorry, We could not find any active ChinesePod subscription.');
+        // res.redirect("/personal/order-form/"+res.app.locals.helpers.getEncodedEmail(req.body.email))
+        // return;
     
-        if (customers && customers.data.length <= 0) {
-            res.flash('error', 'Sorry, We could not find any active ChinesePod subscription.');
-            res.redirect("/personal/")
-        }
+        // if (customers && customers.data.length <= 0) {
+        //     res.flash('error', 'Sorry, We could not find any active ChinesePod subscription.');
+        //     res.redirect("/personal/order-form/"+res.app.locals.helpers.getEncodedEmail(req.body.email))
+        // }
+
+        
 
         let paymentIntentConfirm;
         let customerSource = ''
@@ -314,6 +222,8 @@ exports.placeorder = async function(req, res, next) {
             );
         }
 
+        // console.log("stop",paymentIntentConfirm);
+        // return;
         // console.log(paymentIntentConfirm);
 
         if ( paymentIntentConfirm ) {
@@ -352,13 +262,31 @@ exports.placeorder = async function(req, res, next) {
     } catch (err) {
         console.log("has error",err);
         res.flash('error', 'Sorry! Something went wrong please try again later.');
-        res.redirect("/personal/")
+        res.redirect("/personal/order-form/"+res.app.locals.helpers.getEncodedEmail(req.body.email))
         // send admin notification 
 
     }
     
   
 }
+
+exports.diffAccount = async function(req, res, next) {
+
+    logService.logActivity(req, "tried to change account")
+
+    console.log("here");
+    
+    res.render('diff-account', {
+        layout: 'layout/public-layout-2', 
+        // layout: 'layout/testTemplate', 
+        title: 'Different Account',
+        description: '',
+        keywords: '',
+    });
+    
+  
+}
+
 
 exports.thankyou = async function(req, res, next) {
 

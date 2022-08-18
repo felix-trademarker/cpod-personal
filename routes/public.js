@@ -11,17 +11,17 @@ var router = express.Router();
 // ====================================
 
 router.get([
-    '/',
-    '/personal/',
     '/personal/:email'
 ],publicController.index);
 
 router.get([
-    '/',
-    '/personal/',
     '/personal/order-form/:email'
 ],publicController.orderForm);
 
+
+router.get([
+    '/personal/account/change'
+],publicController.diffAccount);
 // router.get([
 //     '/personal/form/checkout'
 // ],publicController.checkout);
