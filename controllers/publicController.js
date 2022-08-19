@@ -251,6 +251,7 @@ exports.placeorder = async function(req, res, next) {
 
             let orderData = {
                 orderNo: orderNo,
+                charge: paymentIntentConfirm,
                 description: 'Online 10 Classes',
                 amount: 299,
                 customer: users,

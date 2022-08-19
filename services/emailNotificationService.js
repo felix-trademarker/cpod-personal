@@ -25,6 +25,24 @@ if (process.env.ENVIRONMENT == "dev") {
 exports.sendEmailNotification = async function(orders) {
 
   orders.createdAtFormated = moment(orders.createdAt).format("MMMM DD, YYYY")
+
+  let nameAddress=''
+  let nameAddressArr = orders.customer.name.split(' ')
+
+  if (orders.customer.name.includes(',')) {
+    nameAddressArr = orders.customer.name.split(',')
+    if (nameAddressArr.length > 1) {
+      nameAddress = nameAddressArr[1]
+    } else {
+      nameAddress = nameAddressArr[0]
+    }
+  } else {
+    nameAddressArr = orders.customer.name.split(' ')
+    nameAddress = nameAddressArr[0]
+  }
+
+  orders.nameAddress = nameAddress
+
   ejs.renderFile(__dirname+"/../emailTemplates/order.ejs", { orders: orders }, async function (err, data) {
     if (err) {
         console.log(err);
@@ -35,7 +53,7 @@ exports.sendEmailNotification = async function(orders) {
           from: process.env.MAIL_FROM, 
           to: orders.customerEmail,
           // to: "felix@bigfoot.com",
-          bcc: ["courses@chinesepod.com", "felix@bigfoot.com"],
+          bcc: ["felix@bigfoot.com"],
           // bcc: ["felix@bigfoot.com","carissa@chinesepod.com"],
           subject: "Chinesepod LLC | Updated Order Details | "+ orders.orderNo, 
           html: data
@@ -92,6 +110,24 @@ exports.sendEmailNotification = async function(orders) {
 exports.sendInitialOrder = async function(orders) {
 
   orders.createdAtFormated = moment(orders.createdAt).format("MMMM DD, YYYY")
+
+  let nameAddress=''
+  let nameAddressArr = orders.customer.name.split(' ')
+
+  if (orders.customer.name.includes(',')) {
+    nameAddressArr = orders.customer.name.split(',')
+    if (nameAddressArr.length > 1) {
+      nameAddress = nameAddressArr[1]
+    } else {
+      nameAddress = nameAddressArr[0]
+    }
+  } else {
+    nameAddressArr = orders.customer.name.split(' ')
+    nameAddress = nameAddressArr[0]
+  }
+
+  orders.nameAddress = nameAddress
+
   ejs.renderFile(__dirname+"/../emailTemplates/init-order.ejs", { orders: orders }, async function (err, data) {
     if (err) {
         console.log(err);
@@ -102,8 +138,8 @@ exports.sendInitialOrder = async function(orders) {
           from: process.env.MAIL_FROM, 
           to: orders.customerEmail,
           // to: "felix@bigfoot.com",
-          bcc: ["courses@chinesepod.com", "felix@bigfoot.com"],
-          // bcc: ["felix@bigfoot.com","carissa@chinesepod.com"],
+          // bcc: ["courses@chinesepod.com", "felix@bigfoot.com"],
+          bcc: ["felix@bigfoot.com"],
           subject: "Chinesepod LLC | "+ orders.orderNo, 
           html: data
         };
