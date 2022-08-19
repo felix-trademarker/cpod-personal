@@ -179,7 +179,7 @@ exports.placeorder = async function(req, res, next) {
         // res.flash('error', 'Sorry, Something went wrong with the transaction. Please check the card details.');
         // res.redirect("/personal/order-form/"+res.app.locals.helpers.getEncodedEmail(req.body.email))
 
-        return
+        // return
 
         let paymentIntentConfirm;
         let customerSource = ''
