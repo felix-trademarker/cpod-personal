@@ -123,6 +123,10 @@ exports.orderForm = async function(req, res, next) {
     var rpoTimeZone = new Model("timeZone")
     let timeZones = await rpoTimeZone.findQuery({timeZoneID: geo.timezone})
 
+    const customers = await stripe.customers.search({
+        query: 'email:"'+decodedEmail+'"',
+    });
+
     res.render('orderForm', {
         layout: 'layout/public-layout-2', 
         title: '',
@@ -130,7 +134,8 @@ exports.orderForm = async function(req, res, next) {
         keywords: '',
         clientTimezone: timeZones && timeZones.length > 0 ? timeZones[0].displayName : '',
         custEmail: decodedEmail,
-        encodedEmail: (decodedEmail ? res.app.locals.helpers.getEncodedEmail(decodedEmail) : decodedEmail)
+        encodedEmail: (decodedEmail ? res.app.locals.helpers.getEncodedEmail(decodedEmail) : decodedEmail),
+        hasStransaction: (customers && customers.data.length > 0 ? true : false)
     });
     
   
@@ -166,10 +171,6 @@ exports.placeorder = async function(req, res, next) {
         const customers = await stripe.customers.search({
             query: 'email:"'+req.body.email+'"',
         });
-
-        // res.flash('error', 'Sorry, We could not find any active ChinesePod subscription.');
-        // res.redirect("/personal/order-form/"+res.app.locals.helpers.getEncodedEmail(req.body.email))
-        // return;
     
         if (customers && customers.data.length <= 0) {
             res.flash('error', 'Sorry, We could not find any active ChinesePod subscription.');
