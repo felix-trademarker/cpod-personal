@@ -80,8 +80,8 @@
                         </tr>
                       </table>
 
-                      <div v-if="customerData && customerData.status" class="row g-3">1
-                        <div v-if="isLogin && correctAccount" class="col-md-12">2
+                      <div v-if="customerData && customerData.status" class="row g-3">
+                        <div v-if="isLogin && correctAccount" class="col-md-12">
                           <div v-if="customerData.data.card && !otherCard" class="form-group" style="text-align: center; padding: 10px">
                             <label class="textCharge">Charge Card ending {{ customerData.data.card.last4 }}</label>
                             <button type="button" @click="submitForm" class="btn btn-danger btn-lg">Pay $299.00</button>
@@ -410,6 +410,7 @@
       },
 
       correctAccount : function () {
+        console.log(this.vuex.userInfo.email.trim(), this.customerEmail.trim())
         if (this.vuex && this.vuex.userInfo.email.trim() == this.customerEmail.trim())
           return true
         else 
