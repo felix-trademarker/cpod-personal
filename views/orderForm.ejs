@@ -98,19 +98,20 @@
                 </div>
               </div>
 
-
-              <div class="col-md-12" v-if="isLogin && !correctAccount">
-                <h2>ChinesePod Live Classes Package</h2>
-                <h4>Sorry, this is only for premium accounts.</h4>
-                <a class="btn btn-danger mt-5" href="/pricing">Upgrade to premium account</a>
+              <div style="margin:auto" class="col-md-9" v-if="isLogin && !correctAccount">
+                <h3>The ChinesePod ONE-ON-ONE class is currently only offered to PREMIUM users.</h3>
+                <h5>This ensures that you have access to all the materials our personal teachers deem necessary for you to study Chinese efficiently.</h5>
+                <h5>If you are not a PREMIUM user, why not SIGN UP today? </h5>
+                <h5 style="color: #dc3545;font-weight: 800;">Use the DISCOUNT CODE: UP41ON1 to get 30% OFF your PREMIUM SUBSCRIPTION.</h5>
+                <a style="font-size: 22px;font-weight: 700;" class="btn btn-lg btn-danger mt-3" href="/pricing">UPGRADE TO PREMIUM ACCOUNT</a>
               </div>
 
               <% } else { %>
-                <div class="col-md-12" v-if="isLogin && !correctAccount">
+                <div style="margin:auto" class="col-md-9">
 
                   <h2>ChinesePod Live Classes Package</h2>
                   <h4>Sorry, We could not find any active ChinesePod subscription.</h4>
-                  <a class="btn btn-danger mt-5" href="/signup">Signup with ChinesPod Account</a>
+                  <a style="font-size: 22px;font-weight: 700;" class="btn btn-lg btn-danger mt-3" href="/signup">Signup with ChinesPod Account</a>
                 </div>
               <% } %>
 
