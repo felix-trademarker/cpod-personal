@@ -21,84 +21,85 @@
               
               <% if(custEmail) { %>
                 <% if(hasStransaction) { %>
-                <div v-if="!(isLogin && !correctAccount)" class="col-md-9">
-                  <div class="form-row">
+                  <div class="col-md-9">
+                    <div class="form-row">
+                      
+                      <h2>ChinesePod Live Classes Package</h2>
+                      <h3>10 sessions of one hour each for only <span class="price">$299.00</span></h3>
+                    </div>
                     
-                    <h2>ChinesePod Live Classes Package</h2>
-                    <h3>10 sessions of one hour each for only <span class="price">$299.00</span></h3>
-                  </div>
-                  
-                  
-                  <div class="mt-3">
-                    <label for="selectedZone">Time Zone : <%= clientTimezone %></label>
-                    <input type="hidden" name="selectedZone" value="<%= clientTimezone %>">
-                    <label v-if="customerData && customerData.status">
-                      Customer Level: {{ customerData.data.level ? customerData.data.level : 'Newbie' }}
-                    </label>
-                    <label for="email">Customer Email <span class="diffAccount" style="float: right;"><a href="/personal/account/change">use different account</a></span></label>
-                    <input type="text" v-model.lazy="customerEmail" class="form-control ccInput" placeholder="Email Address" disabled>
-                  </div>
-                  
-                  <div class="">
-                    <input type="hidden" id="email" name="email" v-model.lazy="customerEmail" >
-                    <input v-if="customerData && customerData.data" type="hidden" name="sourceCard" v-model="customerData.data.sourceCard">
-                    <input v-if="customerData && customerData.data" type="hidden" name="customerId" v-model="customerData.data.id">
-                  </div>
-
-                  <div v-if="!isLogin">
-                    <input type="password" class="form-control ccInput" v-model="customerPassword" @keyup.enter="loginAccount" placeholder="Password" >
-                    <div v-if="!loginLoader">
-                      <p v-if="loginResponse" class="text-danger">{{ loginResponse }}</p>
-                      <span class="btn btn-danger" @click="loginAccount" >Login</span>
+                    
+                    <div class="mt-3">
+                      <label for="selectedZone">Time Zone : <%= clientTimezone %></label>
+                      <input type="hidden" name="selectedZone" value="<%= clientTimezone %>">
+                      <label v-if="customerData && customerData.status">
+                        Customer Level: {{ customerData.data.level ? customerData.data.level : 'Newbie' }}
+                      </label>
+                      <label for="email">Customer Email <span class="diffAccount" style="float: right;"><a href="/personal/account/change">use different account</a></span></label>
+                      <input type="text" v-model.lazy="customerEmail" class="form-control ccInput" placeholder="Email Address" disabled>
                     </div>
-                    <div v-if="loginLoader">
-                      <p>Please wait while verifying credentials</p>
+                    
+                    <div class="">
+                      <input type="hidden" id="email" name="email" v-model.lazy="customerEmail" >
+                      <input v-if="customerData && customerData.data" type="hidden" name="sourceCard" v-model="customerData.data.sourceCard">
+                      <input v-if="customerData && customerData.data" type="hidden" name="customerId" v-model="customerData.data.id">
                     </div>
 
-                  </div>
-
-                </div>
-
-                <div v-if="!(isLogin && !correctAccount)" class="col-md-3">
-                  <div class="boxSummary">
-                    <table class="table">
-                      <tr>
-                        <th colspan="2">Order Summary</th>
-                      </tr>
-
-                      <tr>
-                        <td>Price</td>
-                        <td class="text-right">$299.00</td>
-                      </tr>
-                      <tr>
-                        <td>Service</td>
-                        <td class="text-right">Online Class</td>
-                      </tr>
-                      <tr>
-                        <td>Total Amount (USD)</td>
-                        <td class="text-right"><span class="txtPrice">$299.00</span></td>
-                      </tr>
-                    </table>
-
-                    <div v-if="customerData && customerData.status" class="row g-3">
-                      <div v-if="isLogin && correctAccount" class="col-md-12">
-                        <div v-if="customerData.data.card && !otherCard" class="form-group" style="text-align: center; padding: 10px">
-                          <label class="textCharge">Charge Card ending {{ customerData.data.card.last4 }}</label>
-                          <button type="button" @click="submitForm" class="btn btn-danger btn-lg">Pay $299.00</button>
-                        </div>
-        
-                        <div v-if="otherCard" class="form-group text-right">
-                          <button type="button" @click="submitForm" class="btn btn-danger btn-lg">Place Order $299.00</button>
-                        </div>
-        
-        
+                    <div v-if="!isLogin">
+                      <input type="password" class="form-control ccInput" v-model="customerPassword" @keyup.enter="loginAccount" placeholder="Password" >
+                      <div v-if="!loginLoader">
+                        <p v-if="loginResponse" class="text-danger">{{ loginResponse }}</p>
+                        <span class="btn btn-danger" @click="loginAccount" >Login</span>
                       </div>
-        
+                      <div v-if="loginLoader">
+                        <p>Please wait while verifying credentials</p>
+                      </div>
+
                     </div>
 
                   </div>
-                </div>
-              <% } else { %>
+
+                  <div class="col-md-3">
+                    <div class="boxSummary">
+                      <table class="table">
+                        <tr>
+                          <th colspan="2">Order Summary</th>
+                        </tr>
+
+                        <tr>
+                          <td>Price</td>
+                          <td class="text-right">$299.00</td>
+                        </tr>
+                        <tr>
+                          <td>Service</td>
+                          <td class="text-right">Online Class</td>
+                        </tr>
+                        <tr>
+                          <td>Total Amount (USD)</td>
+                          <td class="text-right"><span class="txtPrice">$299.00</span></td>
+                        </tr>
+                      </table>
+
+                      <div v-if="customerData && customerData.status" class="row g-3">
+                        <div v-if="isLogin && correctAccount" class="col-md-12">
+                          <div v-if="customerData.data.card && !otherCard" class="form-group" style="text-align: center; padding: 10px">
+                            <label class="textCharge">Charge Card ending {{ customerData.data.card.last4 }}</label>
+                            <button type="button" @click="submitForm" class="btn btn-danger btn-lg">Pay $299.00</button>
+                          </div>
+          
+                          <div v-if="otherCard" class="form-group text-right">
+                            <button type="button" @click="submitForm" class="btn btn-danger btn-lg">Place Order $299.00</button>
+                          </div>
+          
+          
+                        </div>
+          
+                      </div>
+
+                    </div>
+                  </div>
+
+                <% } else { %>
                 <div style="margin:auto" class="col-md-9">
                   <h3>The ChinesePod ONE-ON-ONE class is currently only offered to PREMIUM users.</h3>
                   <h5>This ensures that you have access to all the materials our personal teachers deem necessary for you to study Chinese efficiently.</h5>
@@ -106,7 +107,7 @@
                   <h5 style="color: #dc3545;font-weight: 800;">Use the DISCOUNT CODE: UP41ON1 to get 30% OFF your PREMIUM SUBSCRIPTION.</h5>
                   <a style="font-size: 22px;font-weight: 700;" class="btn btn-lg btn-danger mt-3" href="/pricing">UPGRADE TO PREMIUM ACCOUNT</a>
                 </div>
-              <% } %>
+                <% } %>
 
               <% } else { %>
                 <div style="margin:auto" class="col-md-9">
