@@ -410,7 +410,7 @@
       },
 
       correctAccount : function () {
-        if (this.vuex && this.vuex.userInfo.email == this.customerEmail)
+        if (this.vuex && this.vuex.userInfo.email.trim() == this.customerEmail.trim())
           return true
         else 
           return false 
