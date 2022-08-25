@@ -128,7 +128,7 @@ exports.orderForm = async function(req, res, next) {
         title: '',
         description: '',
         keywords: '',
-        clientTimezone: timeZones[0].displayName,
+        clientTimezone: timeZones && timeZones.length > 0 ? timeZones[0].displayName : '',
         custEmail: decodedEmail,
         encodedEmail: (decodedEmail ? res.app.locals.helpers.getEncodedEmail(decodedEmail) : decodedEmail)
     });
