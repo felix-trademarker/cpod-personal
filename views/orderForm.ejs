@@ -403,7 +403,7 @@
       }, 
 
       isLogin : function () {
-        if (this.vuex && this.vuex.token)
+        if (this.vuex && this.vuex.token && this.vuex.access)
           return true
         else 
           return false 
