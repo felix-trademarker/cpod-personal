@@ -45,7 +45,7 @@
                       <input v-if="customerData && customerData.data" type="hidden" name="customerId" v-model="customerData.data.id">
                     </div>
 
-                    <div v-if="!isLogin && correctAccount">
+                    <div v-if="!isLogin">
                       <input type="password" class="form-control ccInput" v-model="customerPassword" @keyup.enter="loginAccount" placeholder="Password" >
                       <div v-if="!loginLoader">
                         <p v-if="loginResponse" class="text-danger">{{ loginResponse }}</p>
