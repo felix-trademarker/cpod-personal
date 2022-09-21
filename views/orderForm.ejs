@@ -35,7 +35,7 @@
                       <label v-if="customerData && customerData.status">
                         Customer Level: {{ customerData.data.level ? customerData.data.level : 'Newbie' }}
                       </label>
-                      <label for="email">Customer Email <span class="diffAccount" style="float: right;"><a href="/personal/account/change">use different account</a></span></label>
+                      <label for="email">Customer Email <span v-if="!isLogin" class="diffAccount" style="float: right;"><a href="/personal/account/change">use different account</a></span></label>
                       <input type="text" v-model.lazy="customerEmail" class="form-control ccInput" placeholder="Email Address" disabled>
                     </div>
                     
